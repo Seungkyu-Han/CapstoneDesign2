@@ -6,19 +6,19 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
-import java.util.Date
+import java.time.LocalDate
 
 @Entity
 data class Diary(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private var id:Int,
+    var id:Int?,
 
     @ManyToOne
-    private var user: User,
+    var user: User,
 
-    private var date: Date,
+    var date: LocalDate,
 
     @Column(length = 1000)
-    private var content: String
+    var content: String
 )
