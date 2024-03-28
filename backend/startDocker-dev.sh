@@ -1,7 +1,7 @@
 # docker 컨테이너 중지 및 이미지 삭제
 sudo docker stop capstone-dev
 sudo docker rm capstone-dev
-sudo docker rmi prune
+sudo docker image prune -f
 
 #최신버전 pull 후에 빌드
 git pull origin backend/dev
