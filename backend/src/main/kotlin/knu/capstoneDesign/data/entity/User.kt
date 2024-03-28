@@ -7,8 +7,8 @@ import jakarta.persistence.Id
 @Entity
 data class User(
     @Id
-    private var id:Int,
+    var id:Int,
 
     @Column(length = 20)
-    private var name: String
+    var name: String?
 )
