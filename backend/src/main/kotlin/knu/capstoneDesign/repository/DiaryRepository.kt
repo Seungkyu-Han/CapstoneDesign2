@@ -9,4 +9,5 @@ import java.time.LocalDate
 interface DiaryRepository: JpaRepository<Diary, Int>, DiaryRepositoryCustom {
     fun findTopByOrderByIdDesc():Diary
     fun findByUserAndDate(user: User, date: LocalDate): Diary
+    fun deleteByUserAndDate(user: User, date: LocalDate)
 }
