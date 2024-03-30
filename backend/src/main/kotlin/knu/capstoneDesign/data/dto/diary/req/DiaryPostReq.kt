@@ -1,6 +1,9 @@
 package knu.capstoneDesign.data.dto.diary.req
 
+import java.time.LocalDate
+
 data class DiaryPostReq(
     val userId:Int,
-    val content: String
+    val content: String,
+    val date: LocalDate
 )
