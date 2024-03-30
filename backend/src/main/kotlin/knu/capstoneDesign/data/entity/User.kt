@@ -11,4 +11,6 @@ data class User(
 
     @Column(length = 20)
     var name: String?
-)
+){
+    constructor(id: Int): this(id=id, name=null)
+}
