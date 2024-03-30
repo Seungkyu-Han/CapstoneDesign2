@@ -11,6 +11,7 @@ import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -39,5 +40,14 @@ class DiaryController(private val diaryService: DiaryService) {
     )
     fun get(@RequestParam userId: Int, @RequestParam date: LocalDate):ResponseEntity<DiaryGetRes>{
         return diaryService.get(userId, date)
+    }
+
+    @PatchMapping
+    @Operation(summary = "일기 수정 API")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
+    )
+    fun patch(@RequestBody diaryPostReq: DiaryPostReq):ResponseEntity<HttpStatusCode>{
+        return diaryService.patch(diaryPostReq)
     }
 }

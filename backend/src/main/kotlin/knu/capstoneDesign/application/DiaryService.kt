@@ -9,4 +9,5 @@ import java.time.LocalDate
 interface DiaryService {
     fun post(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode>
     fun get(userId: Int, date: LocalDate):ResponseEntity<DiaryGetRes>
+    fun patch(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode>
 }

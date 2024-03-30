@@ -19,15 +19,12 @@ class DiaryServiceImpl(
 
     override fun post(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode> {
 
-//        val user = userRepository.findById(diaryPostReq.userId)
-//            .orElseThrow{throw NullPointerException()}
-
-        val user = User(id = diaryPostReq.userId, name = null)
+        val user = getEmptyUserById(diaryPostReq.userId)
 
         val diary = Diary(
             id = null,
             user = user,
-            date = LocalDate.now(),
+            date = diaryPostReq.date,
             content = diaryPostReq.content
         )
 
@@ -38,10 +35,27 @@ class DiaryServiceImpl(
     }
 
     override fun get(userId: Int, date: LocalDate): ResponseEntity<DiaryGetRes> {
-        val user = User(id = userId)
+        val user = getEmptyUserById(userId)
 
         val diary = diaryRepository.findByUserAndDate(user, date)
 
         return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, content = diary.content))
+    }
+
+    override fun patch(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode> {
+
+        val user = getEmptyUserById(diaryPostReq.userId)
+
+        val diary = diaryRepository.findByUserAndDate(user, diaryPostReq.date)
+
+        diary.content = diaryPostReq.content
+
+        diaryRepository.save(diary)
+
+        return ResponseEntity.ok().build()
+    }
+
+    private fun getEmptyUserById(id: Int): User{
+        return User(id = id, name = null)
     }
 }
