@@ -1,4 +1,4 @@
-package knu.capstoneDesign.data.dto.diary
+package knu.capstoneDesign.data.dto.diary.req
 
 data class DiaryPostReq(
     val userId:Int,
