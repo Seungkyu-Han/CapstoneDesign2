@@ -21,4 +21,10 @@ data class Diary(
 
     @Column(length = 1000)
     var content: String
-)
+){
+    constructor(user: User, date: LocalDate, content: String):
+            this(id = null, user = user, date = date, content = content)
+
+    constructor(user: User, content: String):
+            this(id = null, user = user, date = LocalDate.now(), content = content)
+}
