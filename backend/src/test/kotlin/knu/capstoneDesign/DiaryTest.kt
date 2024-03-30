@@ -6,21 +6,17 @@ import knu.capstoneDesign.data.entity.Diary
 import knu.capstoneDesign.data.entity.User
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.lang.RuntimeException
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension::class)
 class DiaryTest(
     @Autowired
@@ -32,25 +28,21 @@ class DiaryTest(
 ){
 
     private val testUser = User(id = Int.MAX_VALUE, name = "test")
-    private final val diary2DaysAgoContent = "2일전 일기"
-    private final val diary1DaysAgoContent = "1일전 일기"
-    private final val originalContent = "원래 내용입니다."
+
     private final val today: LocalDate = LocalDate.now()
+    private final val testContent = "테스트 일기입니다."
 
-    val diary2DaysAgo = Diary(user = testUser, date = today.minusDays(2), content = diary2DaysAgoContent)
-    val diary1DaysAgo = Diary(user = testUser, date = today.minusDays(1), content = diary1DaysAgoContent)
-    val originalDiary = Diary(user = testUser, date = today.plusDays(1), content = originalContent)
+    private val testDiary = Diary(user = testUser, date =  today, content = testContent)
 
-    @BeforeAll
+    @BeforeEach
     fun addTestUser(){
         userRepository.save(testUser)
-        diaryRepository.save(originalDiary)
+        diaryRepository.save(testDiary)
     }
 
-    @AfterAll
+    @AfterEach
     fun deleteTestUSer(){
-        diaryRepository.deleteAll(listOf(diary2DaysAgo, diary1DaysAgo))
-        diaryRepository.delete(originalDiary)
+        diaryRepository.delete(testDiary)
         userRepository.delete(testUser)
     }
 
@@ -59,22 +51,25 @@ class DiaryTest(
      * diary Post Api Test
      */
     @Test
+    @Transactional
     fun testPost(){
         //given
-        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = "오늘의 일기입니다.", date = LocalDate.now())
+        val testDay = today.minusDays(1)
+        val testContent = "POST 테스트 일기입니다."
+        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = testContent, date = testDay)
 
         //then
         diaryService.post(diaryPostReq)
 
         //when
-        val diary = diaryRepository.findTopByOrderByIdDesc()
+        val diary = diaryRepository.findByUserAndDate(user = testUser, date = testDay)
 
-        assert(diary.content == diaryPostReq.content)
-        assert(diary.user.id == diaryPostReq.userId)
-
+        assert(diary.user.id == testUser.id)
+        assert(diary.date == testDay)
+        assert(diary.content == testContent)
 
         //after
-        diaryRepository.delete(diaryRepository.findTopByOrderByIdDesc())
+        diaryRepository.deleteByUserAndDate(testUser, testDay)
     }
 
     /**
@@ -84,18 +79,13 @@ class DiaryTest(
     @Test
     fun testPostConflict(){
         //given
-        val diary = Diary(user = testUser, date = today.plusDays(2), content = "테스트 입니다.")
-        diaryRepository.save(diary)
+        val diaryPostReq = DiaryPostReq(userId = testUser.id, date = today, content = "POST CONFLICT 테스트입니다.")
 
         //then
-        val diaryPostReq = DiaryPostReq(userId = testUser.id, date = today.plusDays(2), content = "테스트 입니다.")
-        try{
+        try {
             diaryService.post(diaryPostReq)
-            throw RuntimeException()
-        }catch(_: DataIntegrityViolationException){ }
-        finally {
-            diaryRepository.delete(diary)
-        }
+            assert(false)
+        } catch(_: DataIntegrityViolationException){ }
 
     }
 
@@ -105,22 +95,28 @@ class DiaryTest(
      * diary Get Api Test
      */
     @Test
+    @Transactional
     fun testGet(){
         //given
-        diaryRepository.saveAll(listOf(diary2DaysAgo, diary1DaysAgo))
+        val yesterday = today.minusDays(1)
+        val getTestContent = "GET 테스트 일기입니다."
+        val diary = Diary(user = testUser, date = yesterday, content = getTestContent)
+        diaryRepository.save(diary)
 
         //then
-        val diary2DaysAgoResult =
-            diaryService.get(userId = testUser.id, today.minusDays(2)).body ?: throw RuntimeException()
-        val diary1DaysAgoResult =
-            diaryService.get(userId = testUser.id, today.minusDays(1)).body ?: throw RuntimeException()
+        val firstDiary = diaryService.get(userId = testUser.id, date = yesterday).body
+        val secondDiary = diaryService.get(userId = testUser.id, date = today).body
 
         //when
-        assert(today.minusDays(2) == diary2DaysAgoResult.date)
-        assert(diary2DaysAgoContent == diary2DaysAgoResult.content)
+        assert(firstDiary?.content == getTestContent)
+        assert(firstDiary?.date == yesterday)
 
-        assert(today.minusDays(1) == diary1DaysAgoResult.date)
-        assert(diary2DaysAgoContent == diary2DaysAgoResult.content)
+        assert(secondDiary?.content == testContent)
+        assert(secondDiary?.date == today)
+
+        //after
+        diaryRepository.deleteByUserAndDate(user = testUser, date = yesterday)
+
     }
 
     /**
@@ -130,18 +126,17 @@ class DiaryTest(
     @Test
     fun testPatch(){
         //given
-        val newContent = "바뀐 내용입니다."
-        val diaryPatchReq = DiaryPostReq(userId = testUser.id, content = newContent, date = originalDiary.date)
+        val newContent = "PATCH 테스트입니다."
+        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = newContent, date = today)
 
         //then
-        diaryService.patch(diaryPatchReq)
+        diaryService.patch(diaryPostReq)
 
         //when
-        val diary = diaryRepository.findByUserAndDate(testUser, today.plusDays(1))
+        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
+        assert(newDiary.content == newContent)
+        assert(newDiary.date == today)
+        assert(newDiary.user.id == testUser.id)
 
-        assert(diary.content == newContent)
-        assert(diary.date == today.plusDays(1))
-        assert(diary.user == testUser)
-        assert(diary.id == originalDiary.id)
     }
 }
