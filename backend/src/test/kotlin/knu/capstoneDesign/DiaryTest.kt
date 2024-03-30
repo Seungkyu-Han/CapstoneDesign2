@@ -33,20 +33,23 @@ class DiaryTest(
     private val testUser = User(id = Int.MAX_VALUE, name = "test")
     private final val diary2DaysAgoContent = "2일전 일기"
     private final val diary1DaysAgoContent = "1일전 일기"
+    private final val originalContent = "원래 내용입니다."
     private final val today: LocalDate = LocalDate.now()
 
     val diary2DaysAgo = Diary(user = testUser, date = today.minusDays(2), content = diary2DaysAgoContent)
     val diary1DaysAgo = Diary(user = testUser, date = today.minusDays(1), content = diary1DaysAgoContent)
+    val originalDiary = Diary(user = testUser, date = today.plusDays(1), content = originalContent)
 
     @BeforeAll
     fun addTestUser(){
         userRepository.save(testUser)
+        diaryRepository.save(originalDiary)
     }
 
     @AfterAll
     fun deleteTestUSer(){
-        diaryRepository.delete(diaryRepository.findTopByOrderByIdDesc())
         diaryRepository.deleteAll(listOf(diary2DaysAgo, diary1DaysAgo))
+        diaryRepository.delete(originalDiary)
         userRepository.delete(testUser)
     }
 
@@ -55,9 +58,10 @@ class DiaryTest(
      * diary Post Api Test
      */
     @Test
+    @Synchronized
     fun testPost(){
         //given
-        val diaryPostReq = DiaryPostReq(userId = testUser.id, "테스트용 일기입니다.")
+        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = "오늘의 일기입니다.", date = LocalDate.now())
 
         //then
         diaryService.post(diaryPostReq)
@@ -68,6 +72,9 @@ class DiaryTest(
         assert(diary.content == diaryPostReq.content)
         assert(diary.user.id == diaryPostReq.userId)
 
+
+        //after
+        diaryRepository.delete(diaryRepository.findTopByOrderByIdDesc())
     }
 
     /**
@@ -91,5 +98,28 @@ class DiaryTest(
 
         assert(today.minusDays(1) == diary1DaysAgoResult.date)
         assert(diary2DaysAgoContent == diary2DaysAgoResult.content)
+    }
+
+    /**
+     * @author seungkyu-Han
+     * diary Patch Api Test
+     */
+    @Test
+    @Synchronized
+    fun testPatch(){
+        //given
+        val newContent = "바뀐 내용입니다."
+        val diaryPatchReq = DiaryPostReq(userId = testUser.id, content = newContent, date = originalDiary.date)
+
+        //then
+        diaryService.patch(diaryPatchReq)
+
+        //when
+        val diary = diaryRepository.findByUserAndDate(testUser, today.plusDays(1))
+
+        assert(diary.content == newContent)
+        assert(diary.date == today.plusDays(1))
+        assert(diary.user == testUser)
+        assert(diary.id == originalDiary.id)
     }
 }
