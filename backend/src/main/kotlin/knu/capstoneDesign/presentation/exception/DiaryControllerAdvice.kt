@@ -13,6 +13,6 @@ class DiaryControllerAdvice {
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException::class)
     fun sqlIntegrityConstraintViolationExceptionHandler():ResponseEntity<HttpStatusCode>{
-        return ResponseEntity.status(HttpStatus.CONFLICT.ordinal).build()
+        return ResponseEntity(HttpStatus.CONFLICT)
     }
 }

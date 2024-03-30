@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.lang.RuntimeException
 import java.time.LocalDate
@@ -58,7 +59,6 @@ class DiaryTest(
      * diary Post Api Test
      */
     @Test
-    @Synchronized
     fun testPost(){
         //given
         val diaryPostReq = DiaryPostReq(userId = testUser.id, content = "오늘의 일기입니다.", date = LocalDate.now())
@@ -76,6 +76,29 @@ class DiaryTest(
         //after
         diaryRepository.delete(diaryRepository.findTopByOrderByIdDesc())
     }
+
+    /**
+     * @author Seungkyu-Han
+     * diary Post Api Conflict Test
+     */
+    @Test
+    fun testPostConflict(){
+        //given
+        val diary = Diary(user = testUser, date = today.plusDays(2), content = "테스트 입니다.")
+        diaryRepository.save(diary)
+
+        //then
+        val diaryPostReq = DiaryPostReq(userId = testUser.id, date = today.plusDays(2), content = "테스트 입니다.")
+        try{
+            diaryService.post(diaryPostReq)
+            throw RuntimeException()
+        }catch(_: DataIntegrityViolationException){ }
+        finally {
+            diaryRepository.delete(diary)
+        }
+
+    }
+
 
     /**
      * @author Seungkyu-Han
@@ -105,7 +128,6 @@ class DiaryTest(
      * diary Patch Api Test
      */
     @Test
-    @Synchronized
     fun testPatch(){
         //given
         val newContent = "바뀐 내용입니다."
