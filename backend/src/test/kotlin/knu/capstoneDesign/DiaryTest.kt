@@ -1,7 +1,7 @@
 package knu.capstoneDesign
 
 import knu.capstoneDesign.application.DiaryService
-import knu.capstoneDesign.data.dto.diary.DiaryPostReq
+import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
 import knu.capstoneDesign.data.entity.User
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
