@@ -10,6 +10,7 @@ import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Service
@@ -51,6 +52,14 @@ class DiaryServiceImpl(
         diary.content = diaryPostReq.content
 
         diaryRepository.save(diary)
+
+        return ResponseEntity.ok().build()
+    }
+
+    @Transactional
+    override fun delete(userId: Int, date: LocalDate): ResponseEntity<HttpStatusCode> {
+        val user = getEmptyUserById(userId)
+        println(diaryRepository.deleteByUserAndDate(user, date))
 
         return ResponseEntity.ok().build()
     }

@@ -10,6 +10,7 @@ import knu.capstoneDesign.application.DiaryService
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -49,5 +50,14 @@ class DiaryController(private val diaryService: DiaryService) {
     )
     fun patch(@RequestBody diaryPostReq: DiaryPostReq):ResponseEntity<HttpStatusCode>{
         return diaryService.patch(diaryPostReq)
+    }
+
+    @DeleteMapping
+    @Operation(summary = "일기 삭제 API")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
+    )
+    fun delete(@RequestParam userId:Int, @RequestParam date:LocalDate): ResponseEntity<HttpStatusCode>{
+        return diaryService.delete(userId, date)
     }
 }
