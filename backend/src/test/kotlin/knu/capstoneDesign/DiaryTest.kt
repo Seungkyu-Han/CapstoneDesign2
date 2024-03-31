@@ -178,4 +178,40 @@ class DiaryTest(
         val currentCount = diaryRepository.count()
         assert(originalCount == currentCount)
     }
+
+    /**
+     * @author Seungkyu-Han
+     * diary Get List Api Test
+     */
+    @Test
+    fun testGetList(){
+        //given
+        val count = 10
+        val contentList = mutableListOf<String>()
+
+        for (i in 1..count)
+            contentList.add("GET LIST 테스트$i 일기입니다.")
+
+        val diaryList = mutableListOf<Diary>()
+
+        for (i in 1..count)
+            diaryList.add(Diary(testUser, LocalDate.of(1000, 1, i), contentList[i - 1]))
+
+        diaryRepository.saveAll(diaryList)
+
+        //then
+        val result = diaryService.getList(testUser.id,
+            LocalDate.of(1000, 1, 1),
+            LocalDate.of(1000, 12, 30)).body
+
+        //when
+        assert(result?.size == count)
+        for(i in 1..count){
+            assert(result?.get(i - 1)?.content == contentList[i - 1])
+        }
+
+
+        //after
+        diaryRepository.deleteAll(diaryList)
+    }
 }
