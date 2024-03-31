@@ -120,7 +120,7 @@ class DiaryTest(
     }
 
     /**
-     * @author seungkyu-Han
+     * @author Seungkyu-Han
      * diary Patch Api Test
      */
     @Test
@@ -139,4 +139,25 @@ class DiaryTest(
         assert(newDiary.user.id == testUser.id)
 
     }
+
+    /**
+     * @author Seungkyu-Han
+     * diary Delete Api Test
+     */
+    @Test
+    fun testDelete(){
+        //given
+        val deleteDate = LocalDate.of(1000, 1, 1)
+        val diaryToDelete = Diary(user = testUser, date = deleteDate, content = "Delete 테스트 일기입니다.")
+        diaryRepository.save(diaryToDelete)
+        val originalCount = diaryRepository.count()
+
+        //then
+        diaryService.delete(userId = testUser.id, date = deleteDate)
+
+        //when
+        val currentCount = diaryRepository.count()
+        assert(originalCount - 1 == currentCount)
+    }
+
 }
