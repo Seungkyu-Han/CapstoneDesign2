@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
 import knu.capstoneDesign.application.DiaryService
+import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
@@ -59,5 +60,14 @@ class DiaryController(private val diaryService: DiaryService) {
     )
     fun delete(@RequestParam userId:Int, @RequestParam date:LocalDate): ResponseEntity<HttpStatusCode>{
         return diaryService.delete(userId, date)
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "일기 리스트 조회 API")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
+    )
+    fun getList(@RequestParam userId: Int, @RequestParam startDate: LocalDate, @RequestParam endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>{
+        return diaryService.getList(userId, startDate, endDate)
     }
 }
