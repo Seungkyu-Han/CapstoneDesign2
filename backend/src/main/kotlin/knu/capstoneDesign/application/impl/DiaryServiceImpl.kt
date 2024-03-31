@@ -59,7 +59,7 @@ class DiaryServiceImpl(
     @Transactional
     override fun delete(userId: Int, date: LocalDate): ResponseEntity<HttpStatusCode> {
         val user = getEmptyUserById(userId)
-        diaryRepository.deleteByUserAndDate(user, date)
+        println(diaryRepository.deleteByUserAndDate(user, date))
 
         return ResponseEntity.ok().build()
     }
