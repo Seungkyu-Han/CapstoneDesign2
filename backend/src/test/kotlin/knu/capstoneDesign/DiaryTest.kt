@@ -160,4 +160,22 @@ class DiaryTest(
         assert(originalCount - 1 == currentCount)
     }
 
+    /**
+     * @author Seungkyu-Han
+     * diary Delete Not Api Test
+     */
+
+    @Test
+    fun testDeleteNot(){
+        //given
+        val notDeleteDate = LocalDate.of(1000, 1, 2)
+        val originalCount = diaryRepository.count()
+
+        //then
+        diaryService.delete(userId = testUser.id, date = notDeleteDate)
+
+        //when
+        val currentCount = diaryRepository.count()
+        assert(originalCount == currentCount)
+    }
 }
