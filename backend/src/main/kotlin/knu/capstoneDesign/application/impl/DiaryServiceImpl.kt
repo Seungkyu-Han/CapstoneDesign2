@@ -6,6 +6,7 @@ import knu.capstoneDesign.data.entity.User
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
 import knu.capstoneDesign.application.DiaryService
+import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
@@ -62,6 +63,17 @@ class DiaryServiceImpl(
         println(diaryRepository.deleteByUserAndDate(user, date))
 
         return ResponseEntity.ok().build()
+    }
+
+    override fun getList(
+        userId: Int,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): ResponseEntity<List<DiaryGetListRes>> {
+
+        return ResponseEntity
+            .ok()
+            .body(diaryRepository.findByUserIdAndDateBetween(userId, startDate, endDate))
     }
 
     private fun getEmptyUserById(id: Int): User{
