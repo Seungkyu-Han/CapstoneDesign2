@@ -63,20 +63,22 @@ nav {
   justify-content: flex-end;
 }
 
-.navbar li a{
+.navbar li button {
+  background: none;
+  border: none;
   color: #000000;
   text-decoration: none;
   margin-left: 50px;
   font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
 }
-.navbar li:last-child{
+.navbar li:last-child button {
   margin-right: 25px;
 }
-.navbar li a:hover {
+.navbar li button:hover,
+.navbar li button.active {
   color: #FF407D;
-}
-.navbar li a.active {
-  color:#FF407D;
 }
 .mobileNavBar{
   display: none;
@@ -98,17 +100,22 @@ nav {
   height: 120px;
 }
 
-.mobileNavBar li a {
+.mobileNavBar li button {
   display: block;
   padding: 8px 25px;
   text-decoration: none;
   color: black;
-  text-align: right;
+  background: none;
+  border: none;
+  margin-left: auto;
+  font-size: 16px;
 }
-.mobileNavBar li a:hover {
+
+.mobileNavBar li button:hover {
   font-weight: bold;
 }
-.mobileNavBar li a.active {
+
+.mobileNavBar li button.active {
   font-weight: bold;
 }
 @media screen and (max-width: 576px) {

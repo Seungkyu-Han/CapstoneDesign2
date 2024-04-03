@@ -1,11 +1,14 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import DiaryList from './routes/DiaryList';
+import NavigationMenu from './components/NavigationMenu';
+
 
 function App() {
   const [activePage, setActivePage] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -27,15 +30,11 @@ function App() {
             <img src={require('./assets/barIcon.png')} alt=""></img>
           </button>
           <div className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
-            <li><Link to="/" className={activePage === '' ? 'active' : ''} onClick={() => toggleDropdown()}>나의 일기장</Link></li>
-            <li><Link to="/analysis" className={activePage === 'analysis' ? 'active' : ''} onClick={() => toggleDropdown()}>나의 감정분석</Link></li>
-            <li><Link to="/login" className={activePage === 'login' ? 'active' : ''} onClick={() => toggleDropdown()}>로그아웃</Link></li>
+            <NavigationMenu activePage={activePage} navigate={navigate} toggleDropdown={toggleDropdown} />
           </div>
         </div>
         <ul className="navbar">
-          <li><Link to="/" className={activePage === '' ? 'active' : ''}>나의 일기장</Link></li>
-          <li><Link to="/analysis" className={activePage === 'analysis' ? 'active' : ''}>나의 감정분석</Link></li>
-          <li><Link to="/login" className={activePage === 'login' ? 'active' : ''}>로그아웃</Link></li>
+          <NavigationMenu activePage={activePage} navigate={navigate} toggleDropdown={toggleDropdown} />
         </ul>
       </nav>
       <Routes>
