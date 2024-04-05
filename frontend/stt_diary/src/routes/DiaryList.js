@@ -20,22 +20,24 @@ function DiaryList() {
         </div>
         <button className="create-diary-btn">일기 작성</button>
       </div>
-      <div className="diary-list-main">
-        {
-          data.map((item, i) => {
-            return (
-              <div className="diary-wrapper">
-                <div className="diary-color"></div>
-                <div className="diary-date">{item.date}</div>
-                <div className="diary-content">
-                  <div className="diary-title">{item.title}</div>
-                  <div className="diary-text">{item.text}</div>
+      {data.length > 0 ? (
+        <div className="diary-list-main">{
+            data.map((item, i) => {
+              return (
+                <div className="diary-wrapper">
+                  <div className="diary-color"></div>
+                  <div className="diary-date">{item.date}</div>
+                  <div className="diary-content">
+                    <div className="diary-title">{item.title}</div>
+                    <div className="diary-text">{item.text}</div>
+                  </div>
                 </div>
-              </div>
-            )
-          })
-        }
-      </div>
+              )})
+          }
+        </div>
+      ) : (
+        <p className='noDataMessage'>해당 기간에 저장된 일기가 없습니다.</p>
+      )}
     </div>
   )
 }
