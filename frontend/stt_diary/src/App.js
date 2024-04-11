@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import DiaryList from './routes/DiaryList';
+import SentimentReport from './routes/SentimentReport';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       </nav>
       <Routes>
         <Route path='/' element={<DiaryList />}/>
+        <Route path='/analysis' element={<SentimentReport/>}/>
       </Routes>
     </div>
   );
