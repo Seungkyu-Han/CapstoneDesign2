@@ -302,4 +302,43 @@ class DiaryTest(
 
     }
 
+    /**
+     * @author Seungkyu-Han
+     * diary Get Month Api Test
+     */
+    @Test
+    fun testGetAll(){
+        //given
+        val year = Year.now()
+        val title = "테스트 제목"
+        val content = "테스트 본문"
+        val diaryList = mutableListOf<Diary>()
+
+        for(i in 1..12){
+            val diary = Diary(testUser, year.atMonth(i).atDay(1), title + i, content + i)
+            diaryList.add(diary)
+        }
+
+        diaryRepository.saveAll(diaryList)
+
+        //when
+        val result = diaryService.getAll(testUser.id).body
+
+        //then
+
+        assert(result?.get(0)?.date == today)
+        assert(result?.get(0)?.title == testTitle)
+        assert(result?.get(0)?.content == testContent)
+
+        for(i in 1..12){
+            assert(result?.get(i)?.date == year.atMonth(i).atDay(1))
+            assert(result?.get(i)?.title == title + i)
+            assert(result?.get(i)?.content == content + i)
+        }
+
+
+        //after
+        diaryRepository.deleteAll(diaryList)
+    }
+
 }
