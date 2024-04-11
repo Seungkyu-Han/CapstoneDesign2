@@ -83,6 +83,12 @@ class DiaryServiceImpl(
         return this.getList(userId, startDate, endDate)
     }
 
+    override fun getAll(userId: Int): ResponseEntity<List<DiaryGetListRes>> {
+        return ResponseEntity
+            .ok()
+            .body(diaryRepository.findByUserId(userId))
+    }
+
     private fun getEmptyUserById(id: Int): User{
         return User(id = id, name = null)
     }

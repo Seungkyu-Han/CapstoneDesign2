@@ -24,4 +24,13 @@ class DiaryQueryDsl(private val jpaQueryFactory: JPAQueryFactory): DiaryReposito
             )
             .fetch()
     }
+
+    override fun findByUserId(userId: Int): List<DiaryGetListRes> {
+        return jpaQueryFactory.select(QDiaryGetListRes(diary.content))
+            .from(diary)
+            .where(
+                diary.user.id.eq(userId)
+            )
+            .fetch()
+    }
 }
