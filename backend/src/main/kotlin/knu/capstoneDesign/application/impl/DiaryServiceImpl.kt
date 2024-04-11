@@ -28,6 +28,7 @@ class DiaryServiceImpl(
             id = null,
             user = user,
             date = diaryPostReq.date,
+            title = diaryPostReq.title,
             content = diaryPostReq.content
         )
 
@@ -42,7 +43,7 @@ class DiaryServiceImpl(
 
         val diary = diaryRepository.findByUserAndDate(user, date)
 
-        return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, content = diary.content))
+        return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, title = diary.title ?: "", content = diary.content ?: ""))
     }
 
     override fun patch(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode> {
@@ -51,7 +52,8 @@ class DiaryServiceImpl(
 
         val diary = diaryRepository.findByUserAndDate(user, diaryPostReq.date)
 
-        diary.content = diaryPostReq.content
+        diary.title = diaryPostReq.title ?: diary.title
+        diary.content = diaryPostReq.content ?: diary.content
 
         diaryRepository.save(diary)
 
