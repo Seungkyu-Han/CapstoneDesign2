@@ -1,35 +1,43 @@
+import React, { useState, useEffect } from 'react';
 import './DiaryList.css';
-import { data } from './DiaryListData';
+import { TimeSelect } from '../components/TimeSelect';
 
 function DiaryList() {
+  const [data, setData] = useState([]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?userId=1&year=${year}&month=${month}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setData(data);
+      })
+      .catch((error) => console.log(error));
+  }, [year,month]);
+
+  const handleTimeSelectChange = () => {
+    setYear(parseInt(document.getElementById('yearSelect').value));
+    setMonth(parseInt(document.getElementById('monthSelect').value));
+  };
+
   return (
     <div className="diary-list-container">
       <div className="diary-list-header">
-        <div className="time-select">
-          <select id="yearSelect" onchange="handleYearSelectChange()">
-              <option value="" selected>2024년</option>
-              <option value="">2023년</option>
-              <option value="">2022년</option>
-              <option value="">2021년</option>
-          </select>
-          <select id="monthSelect" onchange="handleMonthSelectChange()">
-              <option value="" selected>3월</option>
-              <option value="">2월</option>
-              <option value="">1월</option>
-          </select>
-        </div>
+        <TimeSelect handleTimeSelectChange={handleTimeSelectChange}/>
         <button className="create-diary-btn">일기 작성</button>
       </div>
       {data.length > 0 ? (
         <div className="diary-list-main">{
             data.map((item, i) => {
+              let dates = item.date.split('-');
               return (
-                <div className="diary-wrapper">
+                <div key={i} className="diary-wrapper">
                   <div className="diary-color"></div>
-                  <div className="diary-date">{item.date}</div>
+                  <div className="diary-date">{dates[0]}년 {dates[1]}월 {dates[2]}일</div>
                   <div className="diary-content">
                     <div className="diary-title">{item.title}</div>
-                    <div className="diary-text">{item.text}</div>
+                    <div className="diary-text">{item.content}</div>
                   </div>
                 </div>
               )})
