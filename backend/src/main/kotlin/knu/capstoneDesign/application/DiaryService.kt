@@ -14,4 +14,5 @@ interface DiaryService {
     fun delete(userId: Int, date: LocalDate): ResponseEntity<HttpStatusCode>
     fun getList(userId: Int, startDate: LocalDate, endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>
     fun getMonth(userId: Int, year: Int, month: Int): ResponseEntity<List<DiaryGetListRes>>
+    fun getAll(userId: Int): ResponseEntity<List<DiaryGetListRes>>
 }
