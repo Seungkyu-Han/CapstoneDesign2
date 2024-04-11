@@ -21,3 +21,6 @@
 /frontend/stt_diary/npm-debug.log*
 /frontend/stt_diary/yarn-debug.log*
 /frontend/stt_diary/yarn-error.log*
+
+# env
+/frontend/stt_diary/.env
