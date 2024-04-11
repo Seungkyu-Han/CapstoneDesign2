@@ -3,7 +3,10 @@ import React, { useState, useEffect } from 'react';
 export function TimeSelect({handleTimeSelectChange}) {
     const [timeData, setTimeData] = useState([]);
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/diary/all?userId=1`)
+        fetch(`${process.env.REACT_APP_API_URL}/api/diary/all?userId=1`,
+            {
+              headers: {'Content-Type': 'application/json'},
+            })
             .then((response) => response.json())
             .then((data) => {
                 setTimeData(data);
