@@ -70,4 +70,23 @@ class DiaryController(private val diaryService: DiaryService) {
     fun getList(@RequestParam userId: Int, @RequestParam startDate: LocalDate, @RequestParam endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>{
         return diaryService.getList(userId, startDate, endDate)
     }
+
+    @GetMapping("/month")
+    @Operation(summary = "일기 월별 리스트 조회 API")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
+    )
+    fun getMonth(@RequestParam userId: Int, @RequestParam year: Int, @RequestParam month: Int): ResponseEntity<List<DiaryGetListRes>>{
+        return diaryService.getMonth(userId, year, month)
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "해당 유저의 전체 일기 조회 API")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
+    )
+    fun getAll(@RequestParam userId:Int): ResponseEntity<List<DiaryGetListRes>>{
+        return diaryService.getAll(userId)
+    }
+
 }

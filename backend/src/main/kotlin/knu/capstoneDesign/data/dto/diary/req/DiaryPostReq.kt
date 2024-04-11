@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 data class DiaryPostReq(
     val userId:Int,
-    val content: String,
+    val title:String?,
+    val content: String?,
     val date: LocalDate
 )

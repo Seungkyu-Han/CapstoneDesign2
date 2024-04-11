@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.YearMonth
 
 @Service
 class DiaryServiceImpl(
@@ -27,6 +28,7 @@ class DiaryServiceImpl(
             id = null,
             user = user,
             date = diaryPostReq.date,
+            title = diaryPostReq.title,
             content = diaryPostReq.content
         )
 
@@ -41,7 +43,7 @@ class DiaryServiceImpl(
 
         val diary = diaryRepository.findByUserAndDate(user, date)
 
-        return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, content = diary.content))
+        return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, title = diary.title ?: "", content = diary.content ?: ""))
     }
 
     override fun patch(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode> {
@@ -50,7 +52,8 @@ class DiaryServiceImpl(
 
         val diary = diaryRepository.findByUserAndDate(user, diaryPostReq.date)
 
-        diary.content = diaryPostReq.content
+        diary.title = diaryPostReq.title ?: diary.title
+        diary.content = diaryPostReq.content ?: diary.content
 
         diaryRepository.save(diary)
 
@@ -74,6 +77,18 @@ class DiaryServiceImpl(
         return ResponseEntity
             .ok()
             .body(diaryRepository.findByUserIdAndDateBetween(userId, startDate, endDate))
+    }
+
+    override fun getMonth(userId: Int, year: Int, month: Int): ResponseEntity<List<DiaryGetListRes>> {
+        val startDate = YearMonth.of(year, month).atDay(1)
+        val endDate = YearMonth.of(year, month).atEndOfMonth()
+        return this.getList(userId, startDate, endDate)
+    }
+
+    override fun getAll(userId: Int): ResponseEntity<List<DiaryGetListRes>> {
+        return ResponseEntity
+            .ok()
+            .body(diaryRepository.findByUserId(userId))
     }
 
     private fun getEmptyUserById(id: Int): User{

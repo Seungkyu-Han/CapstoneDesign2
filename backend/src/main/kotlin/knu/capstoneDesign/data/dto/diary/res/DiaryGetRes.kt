@@ -7,6 +7,7 @@ data class DiaryGetRes(
     val id: Int,
 
     val date: LocalDate,
+    val title: String,
 
     val content: String
 )

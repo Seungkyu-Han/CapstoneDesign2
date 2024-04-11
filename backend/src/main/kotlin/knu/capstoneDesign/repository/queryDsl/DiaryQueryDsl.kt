@@ -16,11 +16,20 @@ class DiaryQueryDsl(private val jpaQueryFactory: JPAQueryFactory): DiaryReposito
         startDate: LocalDate,
         endDate: LocalDate
     ): List<DiaryGetListRes> {
-        return jpaQueryFactory.select(QDiaryGetListRes(diary.content))
+        return jpaQueryFactory.select(QDiaryGetListRes(diary.id, diary.date, diary.title, diary.content))
             .from(diary)
             .where(
                 diary.user.id.eq(userId),
                 diary.date.between(startDate, endDate)
+            )
+            .fetch()
+    }
+
+    override fun findByUserId(userId: Int): List<DiaryGetListRes> {
+        return jpaQueryFactory.select(QDiaryGetListRes(diary.id, diary.date, diary.title, diary.content))
+            .from(diary)
+            .where(
+                diary.user.id.eq(userId)
             )
             .fetch()
     }

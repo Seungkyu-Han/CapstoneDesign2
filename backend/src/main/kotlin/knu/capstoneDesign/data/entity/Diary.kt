@@ -19,12 +19,15 @@ data class Diary(
 
     var date: LocalDate,
 
-    @Column(length = 1000)
-    var content: String
-){
-    constructor(user: User, date: LocalDate, content: String):
-            this(id = null, user = user, date = date, content = content)
+    @Column(length = 500)
+    var title: String?,
 
-    constructor(user: User, content: String):
-            this(id = null, user = user, date = LocalDate.now(), content = content)
+    @Column(length = 5000)
+    var content: String?
+){
+    constructor(user: User, date: LocalDate, title: String, content: String):
+            this(id = null, user = user, date = date, title = title, content = content)
+
+    constructor(user: User, title:String, content: String):
+            this(id = null, user = user, date = LocalDate.now(), title = title, content = content)
 }
