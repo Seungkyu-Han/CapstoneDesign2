@@ -36,7 +36,7 @@ function SentimentReport(props) {
     <div className="report-wrapper">
       <div className="header">
         <h3 className="date">
-          <img src={require('../assets/calendar_month.png')} />
+          <img src={require('../assets/calendar_month.png')} alt="calendar_month"/>
           {date.getFullYear()}년 {date.getMonth() + 1}월
           <span className="date-btn-container">
             <button className="date-btn" onClick={() => {
@@ -44,14 +44,14 @@ function SentimentReport(props) {
               newDate.setMonth(date.getMonth() - 1)
               setDate(newDate);
             }}>
-              <img src={require('../assets/arrow_drop_down.png')} />
+              <img src={require('../assets/arrow_drop_down.png')} alt="arrow_drop_down"/>
             </button>
             <button className="date-btn" onClick={() => {
               let newDate = new Date(date);
               newDate.setMonth(date.getMonth() + 1)
               setDate(newDate);
             }}>
-              <img src={require('../assets/arrow_drop_up.png')} />
+              <img src={require('../assets/arrow_drop_up.png')} alt="arrow_drop_up"/>
             </button>
           </span>
         </h3>
