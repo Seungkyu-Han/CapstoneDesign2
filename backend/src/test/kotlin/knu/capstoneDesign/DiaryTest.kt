@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.Year
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -250,4 +251,51 @@ class DiaryTest(
         //after
         diaryRepository.deleteAll(diaryList)
     }
+
+    /**
+     * @author Seungkyu-Han
+     * diary Get Month Api Test
+     */
+    @Test
+    fun testGetMonth(){
+
+        for(i in 1..12){
+            //given
+            val year = Year.now()
+            val startTitle = "GET MONTH 테스트 1입니다."
+            val startContent = "GET MONTH 테스트 1 본문입니다."
+            val endTitle = "GET MONTH 테스트 2입니다."
+            val endContent = "GET MONTH 테스트 2 본문입니다."
+            val startDiary = Diary(testUser, year.atMonth(i).atDay(1), title = startTitle, content = startContent)
+            val endDiary = Diary(testUser, year.atMonth(i).atEndOfMonth(), title = endTitle, content = endContent)
+
+            diaryRepository.saveAll(listOf(startDiary, endDiary))
+
+            //then
+            val result = diaryService.getMonth(testUser.id, year.value , i).body?.sortedBy { it.id }
+
+            var index = 0
+
+            //when
+            if(i == LocalDate.now().monthValue){
+                assert(result?.get(index)?.title == testTitle)
+                assert(result?.get(index)?.content == testContent)
+                index++
+            }
+
+            assert(result?.get(index)?.title == startTitle)
+            assert(result?.get(index)?.content == startContent)
+
+            index++
+
+            assert(result?.get(index)?.title == endTitle)
+            assert(result?.get(index)?.content == endContent)
+
+            //after
+            diaryRepository.deleteAll(listOf(startDiary, endDiary))
+
+        }
+
+    }
+
 }
