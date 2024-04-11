@@ -6,6 +6,6 @@ import java.time.LocalDate
 data class DiaryGetListRes @QueryProjection constructor(
     val id: Int,
     val date: LocalDate,
-    val title: String,
-    val content: String
+    val title: String?,
+    val content: String?
 )
