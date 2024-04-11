@@ -245,6 +245,7 @@ class DiaryTest(
         for(i in 1..count){
             assert(result?.get(i - 1)?.title == titleList[i - 1])
             assert(result?.get(i - 1)?.content == contentList[i - 1])
+            assert(result?.get(i - 1)?.date == LocalDate.of(1000, 1, i))
         }
 
 
@@ -280,16 +281,19 @@ class DiaryTest(
             if(i == LocalDate.now().monthValue){
                 assert(result?.get(index)?.title == testTitle)
                 assert(result?.get(index)?.content == testContent)
+                assert(result?.get(index)?.date == today)
                 index++
             }
 
             assert(result?.get(index)?.title == startTitle)
             assert(result?.get(index)?.content == startContent)
+            assert(result?.get(index)?.date == year.atMonth(i).atDay(1))
 
             index++
 
             assert(result?.get(index)?.title == endTitle)
             assert(result?.get(index)?.content == endContent)
+            assert(result?.get(index)?.date == year.atMonth(i).atEndOfMonth())
 
             //after
             diaryRepository.deleteAll(listOf(startDiary, endDiary))
