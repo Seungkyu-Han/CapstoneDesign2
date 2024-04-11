@@ -8,7 +8,10 @@ function DiaryList() {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?userId=1&year=${year}&month=${month}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?userId=1&year=${year}&month=${month}`,
+        {
+          headers: {'Content-Type': 'application/json'},
+        })
       .then((response) => response.json())
       .then((data) => {
         setData(data);
