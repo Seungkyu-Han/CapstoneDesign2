@@ -70,7 +70,7 @@ function SentimentReport(props) {
           {
             dates.map((item, i) => {
               return(
-                <div className="date-item">
+                <div className="date-item" key={i}>
                   <span className={i >= firstIndex && i <= lastIndex ? "this" : "other"}>{item}</span>
                 </div>
               )
