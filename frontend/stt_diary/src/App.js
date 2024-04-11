@@ -2,8 +2,8 @@ import './App.css';
 import { useState } from 'react';
 import { Routes, Route} from 'react-router-dom';
 import DiaryList from './routes/DiaryList';
+import SentimentReport from './routes/SentimentReport';
 import NavigationMenu from './components/NavigationMenu';
-
 
 function App() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -31,6 +31,7 @@ function App() {
       </nav>
       <Routes>
         <Route path='/' element={<DiaryList />}/>
+        <Route path='/analysis' element={<SentimentReport/>}/>
       </Routes>
     </div>
   );
