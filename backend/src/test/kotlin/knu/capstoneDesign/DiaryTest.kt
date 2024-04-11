@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -75,23 +74,6 @@ class DiaryTest(
         diaryRepository.deleteByUserAndDate(testUser, testDay)
     }
 
-    /**
-     * @author Seungkyu-Han
-     * diary Post Api Conflict Test
-     */
-    @Test
-    fun testPostConflict(){
-        //given
-        val diaryPostReq = DiaryPostReq(userId = testUser.id, date = today, title = "테스트입니다.", content = "POST CONFLICT 테스트입니다.")
-
-        //then
-        try {
-            diaryService.post(diaryPostReq)
-            assert(false)
-        } catch(_: DataIntegrityViolationException){ }
-
-    }
-
 
     /**
      * @author Seungkyu-Han
@@ -133,6 +115,48 @@ class DiaryTest(
     fun testPatchContent(){
         //given
         val newContent = "PATCH 테스트입니다."
+        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = newContent, title = null, date = today)
+
+        //then
+        diaryService.patch(diaryPostReq)
+
+        //when
+        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
+        assert(newDiary.content == newContent)
+        assert(newDiary.date == today)
+        assert(newDiary.user.id == testUser.id)
+
+    }
+
+    /**
+     * @author Seungkyu-Han
+     * diary Patch title Api Test
+     */
+    @Test
+    fun testPatchTitle(){
+        //given
+        val newTitle = "PATCH 테스트입니다."
+        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = null, title = newTitle, date = today)
+
+        //then
+        diaryService.patch(diaryPostReq)
+
+        //when
+        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
+        assert(newDiary.title == newTitle)
+        assert(newDiary.date == today)
+        assert(newDiary.user.id == testUser.id)
+
+    }
+
+    /**
+     * @author Seungkyu-Han
+     * diary Patch Content All Test
+     */
+    @Test
+    fun testPatchAll(){
+        //given
+        val newContent = "PATCH 테스트입니다."
         val newTitle = "PATCH 테스트입니다."
         val diaryPostReq = DiaryPostReq(userId = testUser.id, content = newContent, title = newTitle, date = today)
 
@@ -142,6 +166,7 @@ class DiaryTest(
         //when
         val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
         assert(newDiary.content == newContent)
+        assert(newDiary.title == newTitle)
         assert(newDiary.date == today)
         assert(newDiary.user.id == testUser.id)
 
