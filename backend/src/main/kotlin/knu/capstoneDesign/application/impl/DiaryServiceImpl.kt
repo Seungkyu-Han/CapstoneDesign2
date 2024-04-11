@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.YearMonth
 
 @Service
 class DiaryServiceImpl(
@@ -74,6 +75,12 @@ class DiaryServiceImpl(
         return ResponseEntity
             .ok()
             .body(diaryRepository.findByUserIdAndDateBetween(userId, startDate, endDate))
+    }
+
+    override fun getMonth(userId: Int, year: Int, month: Int): ResponseEntity<List<DiaryGetListRes>> {
+        val startDate = YearMonth.of(year, month).atDay(1)
+        val endDate = YearMonth.of(year, month).atEndOfMonth()
+        return this.getList(userId, startDate, endDate)
     }
 
     private fun getEmptyUserById(id: Int): User{
