@@ -3,13 +3,13 @@
     display: flex;
     flex-direction: column;
 }
-.diaryDate {
+.diary-create-date {
     display: flex;
     justify-content: flex-end;
     font-size: 14px;
     color: black;
 }
-.diaryTitle {
+.diary-create-title {
     height: 5vh;
     border-radius: 15px;
     margin-top: 10px;
@@ -20,7 +20,7 @@
     font-weight: bold;
     font-size: 16px;
 }
-.diaryContent {
+.diary-create-content {
     height: 40vh;
     border-radius: 15px;
     box-shadow: 0 3px 3px #ccc;
@@ -28,8 +28,8 @@
     border: 1px solid #000;
     font-size: 16px;
 }
-.diaryContent:focus,
-.diaryTitle:focus {
+.diary-create-content:focus,
+.diary-create-title:focus {
     outline: none;
 }
 input[type="text"]::placeholder {
@@ -37,13 +37,13 @@ input[type="text"]::placeholder {
     font-weight: normal
 }
 
-.buttonContainer {
+.button-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     margin-top: 20px;
 }
-.cancelButton {
+.cancel-button {
     border: 1px solid #000;
     border-radius: 20px;
     background-color: rgba(230, 232, 235, 0.5);
@@ -51,7 +51,7 @@ input[type="text"]::placeholder {
     margin: 10px;
     cursor: pointer;
 }
-.saveButton {
+.save-button {
     border: 1px solid #000;
     border-radius: 20px;
     background-color: rgba(255, 202, 212, 0.5);
@@ -59,7 +59,7 @@ input[type="text"]::placeholder {
     padding: 10px 30px;
     cursor: pointer;
 }
-.recordButton {
+.record-button {
     border: 1px solid #000;
     border-radius: 50%;
     background-color: rgba(255, 202, 212, 0.5);
@@ -71,7 +71,7 @@ input[type="text"]::placeholder {
     padding: 15px 20px;
     cursor: pointer;
 }
-.recordButton img {
+.record-button img {
     width: 20px;
     height: 20px;
 }

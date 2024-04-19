@@ -12,9 +12,9 @@ function RecordModal({setIsModalOpen }) {
         <div className='modal-wrapper' onClick={closeModal}>
         <div className="modal-content">
             <p className='p1'>말씀 해주세요 ...</p>
-            <img className="recordLoadingIcon"src={require('../assets/record-loading-icon.png')} alt="" />
+            <img className="record-loading-icon"src={require('../assets/record-loading-icon.png')} alt="" />
             <p className='p2'>녹음 중...</p>
-            <button className='saveRecordButton'>
+            <button className='save-record-button'>
                 <img src={require('../assets/save-record-icon.png')} alt="" />
             </button>
         </div>

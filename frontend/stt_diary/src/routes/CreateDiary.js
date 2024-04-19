@@ -20,8 +20,8 @@ function CreateDiary() {
     }
     
     const handleSaveButton = () => {
-        const title = document.querySelector('.diaryTitle').value;
-        const content = document.querySelector('.diaryContent').value;
+        const title = document.querySelector('.diary-create-title').value;
+        const content = document.querySelector('.diary-create-content').value;
         const date = currentDate.toISOString().split('T')[0];
         if (title === '') {
             alert('제목을 입력해주세요.');
@@ -55,15 +55,15 @@ function CreateDiary() {
 
     return (
         <div className='create-diary-wrapper'>
-            <span className="diaryDate">{formattedDate}</span>
-            <input className="diaryTitle" type="text" placeholder="제목을 입력하세요." />
-            <textarea className="diaryContent" placeholder="일기 내용을 입력하세요."></textarea>
-            <div className="buttonContainer">
-                <button className="cancelButton" onClick={handleCancelButton}>취소</button>
-                <div className="recordButton" onClick={handleRecordButton}>
+            <span className="diary-create-date">{formattedDate}</span>
+            <input className="diary-create-title" type="text" placeholder="제목을 입력하세요." />
+            <textarea className="diary-create-content " placeholder="일기 내용을 입력하세요."></textarea>
+            <div className="button-container">
+                <button className="cancel-button" onClick={handleCancelButton}>취소</button>
+                <div className="record-button" onClick={handleRecordButton}>
                     <img src={require('../assets/record-icon.png')} alt=""/>
                 </div>
-                <button className="saveButton" onClick={handleSaveButton}>저장</button>
+                <button className="save-button" onClick={handleSaveButton}>저장</button>
             </div>
             {isModalOpen && <RecordModal setIsModalOpen={setIsModalOpen} />}
         </div>
