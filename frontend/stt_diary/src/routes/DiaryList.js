@@ -27,7 +27,7 @@ function DiaryList() {
   return (
     <div className="diary-list-container">
       <div className="diary-list-header">
-        <TimeSelect handleTimeSelectChange={handleTimeSelectChange}/>
+        <TimeSelect handleTimeSelectChange={handleTimeSelectChange} year={year} month={month}/>
         <button className="create-diary-btn">일기 작성</button>
       </div>
       {data.length > 0 ? (

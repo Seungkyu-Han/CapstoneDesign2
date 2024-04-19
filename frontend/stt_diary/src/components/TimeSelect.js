@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export function TimeSelect({handleTimeSelectChange}) {
+export function TimeSelect({handleTimeSelectChange, year, month}) {
     const [timeData, setTimeData] = useState([]);
     useEffect(() => {
         fetch(`${process.env.REACT_APP_API_URL}/api/diary/all?userId=1`,
@@ -16,7 +16,7 @@ export function TimeSelect({handleTimeSelectChange}) {
 
     return (
         <div className="time-select">
-          <select id="yearSelect" onChange={handleTimeSelectChange}>
+          <select id="yearSelect" onChange={handleTimeSelectChange} value={year}>
               {timeData.length > 0 ? (
                 (() => {
                     const end = parseInt(timeData[0].date.split('-')[0]);
@@ -32,7 +32,7 @@ export function TimeSelect({handleTimeSelectChange}) {
               )}
           </select>
 
-          <select id="monthSelect" onChange={handleTimeSelectChange}>
+          <select id="monthSelect" onChange={handleTimeSelectChange} value={month}>
               <option key ="1" value="1">1월</option>
               <option key ="2" value="2">2월</option>
               <option key ="3" value="3">3월</option>
