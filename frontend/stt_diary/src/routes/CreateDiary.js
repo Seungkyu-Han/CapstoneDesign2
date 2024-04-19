@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateDiary.css';
+import RecordModal from '../components/RecordModal';
 
 
 function CreateDiary() {
     const currentDate = new Date();
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const getDayOfWeek = (currentDate) => { 
@@ -47,18 +49,23 @@ function CreateDiary() {
         .catch((error) => console.log(error));
     };
 
+    const handleRecordButton = () => {
+        setIsModalOpen(true);
+    };
+
     return (
         <div className='create-diary-wrapper'>
-        <span className="diaryDate">{formattedDate}</span>
-        <input className="diaryTitle" type="text" placeholder="제목을 입력하세요." />
-        <textarea className="diaryContent" placeholder="일기 내용을 입력하세요."></textarea>
-        <div className="buttonContainer">
-            <button className="cancelButton" onClick={handleCancelButton}>취소</button>
-            <div className="recordButton">
-                <img src={require('../assets/record-icon.png')} alt=""/>
+            <span className="diaryDate">{formattedDate}</span>
+            <input className="diaryTitle" type="text" placeholder="제목을 입력하세요." />
+            <textarea className="diaryContent" placeholder="일기 내용을 입력하세요."></textarea>
+            <div className="buttonContainer">
+                <button className="cancelButton" onClick={handleCancelButton}>취소</button>
+                <div className="recordButton" onClick={handleRecordButton}>
+                    <img src={require('../assets/record-icon.png')} alt=""/>
+                </div>
+                <button className="saveButton" onClick={handleSaveButton}>저장</button>
             </div>
-            <button className="saveButton" onClick={handleSaveButton}>저장</button>
-        </div>
+            {isModalOpen && <RecordModal setIsModalOpen={setIsModalOpen} />}
         </div>
     );
 }
