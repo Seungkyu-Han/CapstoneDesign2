@@ -2,11 +2,13 @@ import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
+import LoadingModal from '../components/LoadingModal';
 
 
 function CreateDiary() {
     const currentDate = new Date();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
+    const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const getDayOfWeek = (currentDate) => { 
@@ -43,14 +45,13 @@ function CreateDiary() {
             })
         })
         .then(() => {
-            alert('일기가 저장되었습니다.');
-            navigate('/');
+            setIsLoadingModalOpen(true);
         })
         .catch((error) => console.log(error));
     };
 
     const handleRecordButton = () => {
-        setIsModalOpen(true);
+        setIsRecordModalOpen(true);
     };
 
     return (
@@ -65,7 +66,8 @@ function CreateDiary() {
                 </div>
                 <button className="save-button" onClick={handleSaveButton}>저장</button>
             </div>
-            {isModalOpen && <RecordModal setIsModalOpen={setIsModalOpen} />}
+            {isRecordModalOpen && <RecordModal setIsRecordModalOpen={setIsRecordModalOpen} />}
+            {isLoadingModalOpen && <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />}
         </div>
     );
 }
