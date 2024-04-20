@@ -15,4 +15,9 @@ class DiaryControllerAdvice {
     fun sqlIntegrityConstraintViolationExceptionHandler():ResponseEntity<HttpStatusCode>{
         return ResponseEntity(HttpStatus.CONFLICT)
     }
+
+    @ExceptionHandler(NullPointerException::class)
+    fun nullPointerExceptionHandler():ResponseEntity<HttpStatusCode>{
+        return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
 }

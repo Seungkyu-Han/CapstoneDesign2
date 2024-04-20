@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
 import knu.capstoneDesign.application.DiaryService
+import knu.capstoneDesign.data.dto.diary.req.DiaryPatchReq
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
@@ -40,8 +41,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun get(@RequestParam userId: Int, @RequestParam date: LocalDate):ResponseEntity<DiaryGetRes>{
-        return diaryService.get(userId, date)
+    fun get(@RequestParam id: Int):ResponseEntity<DiaryGetRes>{
+        return diaryService.get(id)
     }
 
     @PatchMapping
@@ -49,8 +50,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun patch(@RequestBody diaryPostReq: DiaryPostReq):ResponseEntity<HttpStatusCode>{
-        return diaryService.patch(diaryPostReq)
+    fun patch(@RequestBody diaryPatchReq: DiaryPatchReq):ResponseEntity<HttpStatusCode>{
+        return diaryService.patch(diaryPatchReq)
     }
 
     @DeleteMapping
@@ -58,8 +59,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun delete(@RequestParam userId:Int, @RequestParam date:LocalDate): ResponseEntity<HttpStatusCode>{
-        return diaryService.delete(userId, date)
+    fun delete(@RequestParam id:Int): ResponseEntity<HttpStatusCode>{
+        return diaryService.delete(id)
     }
 
     @GetMapping("/list")

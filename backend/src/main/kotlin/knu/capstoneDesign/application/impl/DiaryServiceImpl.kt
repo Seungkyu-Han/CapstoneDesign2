@@ -6,12 +6,14 @@ import knu.capstoneDesign.data.entity.User
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
 import knu.capstoneDesign.application.DiaryService
+import knu.capstoneDesign.data.dto.diary.req.DiaryPatchReq
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.NullPointerException
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -38,22 +40,19 @@ class DiaryServiceImpl(
         return ResponseEntity.ok().build()
     }
 
-    override fun get(userId: Int, date: LocalDate): ResponseEntity<DiaryGetRes> {
-        val user = getEmptyUserById(userId)
+    override fun get(id: Int): ResponseEntity<DiaryGetRes> {
 
-        val diary = diaryRepository.findByUserAndDate(user, date)
+        val diary = diaryRepository.findById(id).orElseThrow{NullPointerException()}
 
         return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, title = diary.title ?: "", content = diary.content ?: ""))
     }
 
-    override fun patch(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode> {
+    override fun patch(diaryPatchReq: DiaryPatchReq): ResponseEntity<HttpStatusCode> {
 
-        val user = getEmptyUserById(diaryPostReq.userId)
+        val diary = diaryRepository.findById(diaryPatchReq.id).orElseThrow {NullPointerException()}
 
-        val diary = diaryRepository.findByUserAndDate(user, diaryPostReq.date)
-
-        diary.title = diaryPostReq.title ?: diary.title
-        diary.content = diaryPostReq.content ?: diary.content
+        diary.title = diaryPatchReq.title
+        diary.content = diaryPatchReq.content ?: diary.content
 
         diaryRepository.save(diary)
 
@@ -61,9 +60,8 @@ class DiaryServiceImpl(
     }
 
     @Transactional
-    override fun delete(userId: Int, date: LocalDate): ResponseEntity<HttpStatusCode> {
-        val user = getEmptyUserById(userId)
-        println(diaryRepository.deleteByUserAndDate(user, date))
+    override fun delete(id: Int): ResponseEntity<HttpStatusCode> {
+        diaryRepository.deleteById(id)
 
         return ResponseEntity.ok().build()
     }
