@@ -12,9 +12,7 @@ function LoadingModal({setIsLoadingModalOpen }) {
         <div className='loading-modal-wrapper' onClick={closeLoadingModal}>
             <div className="loading-modal-content">
                 <p>오늘 일기로 감성 분석 중입니다 ...</p>
-                <div className="loading-spinner">
-                    <img src={require('../assets/loading-icon.png')} alt="" />
-                </div>
+                <div className="loading-spinner"></div>
             </div>
         </div>
     );
