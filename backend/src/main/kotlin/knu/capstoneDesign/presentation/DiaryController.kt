@@ -40,8 +40,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun get(@RequestParam userId: Int, @RequestParam date: LocalDate):ResponseEntity<DiaryGetRes>{
-        return diaryService.get(userId, date)
+    fun get(@RequestParam id: Int):ResponseEntity<DiaryGetRes>{
+        return diaryService.get(id)
     }
 
     @PatchMapping

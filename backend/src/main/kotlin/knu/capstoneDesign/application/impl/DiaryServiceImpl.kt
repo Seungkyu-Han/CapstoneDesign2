@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.NullPointerException
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -38,10 +39,9 @@ class DiaryServiceImpl(
         return ResponseEntity.ok().build()
     }
 
-    override fun get(userId: Int, date: LocalDate): ResponseEntity<DiaryGetRes> {
-        val user = getEmptyUserById(userId)
+    override fun get(id: Int): ResponseEntity<DiaryGetRes> {
 
-        val diary = diaryRepository.findByUserAndDate(user, date)
+        val diary = diaryRepository.findById(id).orElseThrow{NullPointerException()}
 
         return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, title = diary.title ?: "", content = diary.content ?: ""))
     }
