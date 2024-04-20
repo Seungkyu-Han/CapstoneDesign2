@@ -1,6 +1,7 @@
 package knu.capstoneDesign
 
 import knu.capstoneDesign.application.DiaryService
+import knu.capstoneDesign.data.dto.diary.req.DiaryPatchReq
 import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
 import knu.capstoneDesign.data.entity.Diary
 import knu.capstoneDesign.data.entity.User
@@ -119,10 +120,11 @@ class DiaryTest(
     fun testPatchContent(){
         //given
         val newContent = "PATCH 테스트입니다."
-        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = newContent, title = null, date = today)
+        val diaryId = diaryRepository.findByUserAndDate(testUser, today).id ?: 0
+        val diaryPatchReq = DiaryPatchReq(diaryId, content = newContent, title = "", date = today)
 
         //then
-        diaryService.patch(diaryPostReq)
+        diaryService.patch(diaryPatchReq)
 
         //when
         val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
@@ -140,10 +142,11 @@ class DiaryTest(
     fun testPatchTitle(){
         //given
         val newTitle = "PATCH 테스트입니다."
-        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = null, title = newTitle, date = today)
+        val diaryId = diaryRepository.findByUserAndDate(testUser, today).id ?: 0
+        val diaryPatchReq = DiaryPatchReq(diaryId, content = null, title = newTitle, date = today)
 
         //then
-        diaryService.patch(diaryPostReq)
+        diaryService.patch(diaryPatchReq)
 
         //when
         val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
@@ -162,10 +165,11 @@ class DiaryTest(
         //given
         val newContent = "PATCH 테스트입니다."
         val newTitle = "PATCH 테스트입니다."
-        val diaryPostReq = DiaryPostReq(userId = testUser.id, content = newContent, title = newTitle, date = today)
+        val diaryId = diaryRepository.findByUserAndDate(testUser, today).id ?: 0
+        val diaryPatchReq = DiaryPatchReq(id = diaryId, content = newContent, title = newTitle, date = today)
 
         //then
-        diaryService.patch(diaryPostReq)
+        diaryService.patch(diaryPatchReq)
 
         //when
         val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
