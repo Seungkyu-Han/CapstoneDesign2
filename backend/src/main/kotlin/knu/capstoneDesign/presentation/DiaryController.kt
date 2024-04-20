@@ -59,8 +59,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun delete(@RequestParam userId:Int, @RequestParam date:LocalDate): ResponseEntity<HttpStatusCode>{
-        return diaryService.delete(userId, date)
+    fun delete(@RequestParam id:Int): ResponseEntity<HttpStatusCode>{
+        return diaryService.delete(id)
     }
 
     @GetMapping("/list")
