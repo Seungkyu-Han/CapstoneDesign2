@@ -90,9 +90,12 @@ class DiaryTest(
         val diary = Diary(user = testUser, date = yesterday, title = getTestTitle, content = getTestContent)
         diaryRepository.save(diary)
 
+        val firstDiaryId = diaryRepository.findByUserAndDate(testUser, yesterday).id
+        val secondDiaryId = diaryRepository.findByUserAndDate(testUser, today).id
+
         //then
-        val firstDiary = diaryService.get(userId = testUser.id, date = yesterday).body
-        val secondDiary = diaryService.get(userId = testUser.id, date = today).body
+        val firstDiary = diaryService.get(firstDiaryId ?: 0).body
+        val secondDiary = diaryService.get(secondDiaryId ?: 0).body
 
         //when
         assert(firstDiary?.content == getTestContent)
