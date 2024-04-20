@@ -65,7 +65,7 @@ class DiaryTest(
         diaryService.post(diaryPostReq)
 
         //when
-        val diary = diaryRepository.findByUserAndDate(user = testUser, date = testDay)
+        val diary = diaryRepository.findByUserAndDate(user = testUser, date = testDay).orElseThrow { NullPointerException() }
 
         assert(diary.user.id == testUser.id)
         assert(diary.date == testDay)
@@ -91,8 +91,8 @@ class DiaryTest(
         val diary = Diary(user = testUser, date = yesterday, title = getTestTitle, content = getTestContent)
         diaryRepository.save(diary)
 
-        val firstDiaryId = diaryRepository.findByUserAndDate(testUser, yesterday).id
-        val secondDiaryId = diaryRepository.findByUserAndDate(testUser, today).id
+        val firstDiaryId = diaryRepository.findByUserAndDate(testUser, yesterday).orElseThrow{NullPointerException()}.id
+        val secondDiaryId = diaryRepository.findByUserAndDate(testUser, today).orElseThrow{NullPointerException()}.id
 
         //then
         val firstDiary = diaryService.get(firstDiaryId ?: 0).body
@@ -120,14 +120,14 @@ class DiaryTest(
     fun testPatchContent(){
         //given
         val newContent = "PATCH 테스트입니다."
-        val diaryId = diaryRepository.findByUserAndDate(testUser, today).id ?: 0
+        val diaryId = diaryRepository.findByUserAndDate(testUser, today).orElseThrow{NullPointerException()}.id ?: 0
         val diaryPatchReq = DiaryPatchReq(diaryId, content = newContent, title = "", date = today)
 
         //then
         diaryService.patch(diaryPatchReq)
 
         //when
-        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
+        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today).orElseThrow{NullPointerException()}
         assert(newDiary.content == newContent)
         assert(newDiary.date == today)
         assert(newDiary.user.id == testUser.id)
@@ -142,14 +142,14 @@ class DiaryTest(
     fun testPatchTitle(){
         //given
         val newTitle = "PATCH 테스트입니다."
-        val diaryId = diaryRepository.findByUserAndDate(testUser, today).id ?: 0
+        val diaryId = diaryRepository.findByUserAndDate(testUser, today).orElseThrow{NullPointerException()}.id ?: 0
         val diaryPatchReq = DiaryPatchReq(diaryId, content = null, title = newTitle, date = today)
 
         //then
         diaryService.patch(diaryPatchReq)
 
         //when
-        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
+        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today).orElseThrow{NullPointerException()}
         assert(newDiary.title == newTitle)
         assert(newDiary.date == today)
         assert(newDiary.user.id == testUser.id)
@@ -165,14 +165,14 @@ class DiaryTest(
         //given
         val newContent = "PATCH 테스트입니다."
         val newTitle = "PATCH 테스트입니다."
-        val diaryId = diaryRepository.findByUserAndDate(testUser, today).id ?: 0
+        val diaryId = diaryRepository.findByUserAndDate(testUser, today).orElseThrow{NullPointerException()}.id ?: 0
         val diaryPatchReq = DiaryPatchReq(id = diaryId, content = newContent, title = newTitle, date = today)
 
         //then
         diaryService.patch(diaryPatchReq)
 
         //when
-        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today)
+        val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today).orElseThrow{NullPointerException()}
         assert(newDiary.content == newContent)
         assert(newDiary.title == newTitle)
         assert(newDiary.date == today)
@@ -191,9 +191,10 @@ class DiaryTest(
         val diaryToDelete = Diary(user = testUser, date = deleteDate, title = "테스트입니다.", content = "Delete 테스트 일기입니다.")
         diaryRepository.save(diaryToDelete)
         val originalCount = diaryRepository.count()
+        val diaryId = diaryRepository.findByUserAndDate(testUser, deleteDate).orElseThrow{NullPointerException()}.id ?: 0
 
         //then
-        diaryService.delete(userId = testUser.id, date = deleteDate)
+        diaryService.delete(diaryId)
 
         //when
         val currentCount = diaryRepository.count()
@@ -208,11 +209,10 @@ class DiaryTest(
     @Test
     fun testDeleteNot(){
         //given
-        val notDeleteDate = LocalDate.of(1000, 1, 2)
         val originalCount = diaryRepository.count()
 
         //then
-        diaryService.delete(userId = testUser.id, date = notDeleteDate)
+        diaryService.delete(0)
 
         //when
         val currentCount = diaryRepository.count()
