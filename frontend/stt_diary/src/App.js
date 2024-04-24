@@ -4,6 +4,7 @@ import { Routes, Route} from 'react-router-dom';
 import DiaryList from './routes/DiaryList';
 import SentimentReport from './routes/SentimentReport';
 import NavigationMenu from './components/NavigationMenu';
+import CreateDiary from './routes/CreateDiary';
 
 function App() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,27 +12,27 @@ function App() {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  
 
   return (
     <div className="App">
       <nav>
-        <div className='mobileNavBar'>
-          <img src={require('./assets/mobileLogo.png')} alt="" className='mobileLogo' />
-          <button className="dropdown-btn" onClick={() => toggleDropdown()}>
-            <img src={require('./assets/barIcon.png')} alt=""></img>
-          </button>
-          <div className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
-            <NavigationMenu toggleDropdown={toggleDropdown} />
+          <div className='mobileNavBar'>
+            <img src={require('./assets/mobileLogo.png')} alt="" className='mobileLogo' />
+            <button className="dropdown-btn" onClick={() => toggleDropdown()}>
+              <img src={require('./assets/barIcon.png')} alt=""></img>
+            </button>
+            <ul className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
+              <NavigationMenu toggleDropdown={toggleDropdown} />
+            </ul>
           </div>
-        </div>
-        <ul className="navbar">
-          <NavigationMenu toggleDropdown={toggleDropdown} />
-        </ul>
+          <ul className="navbar">
+            <NavigationMenu toggleDropdown={toggleDropdown} />
+          </ul>
       </nav>
       <Routes>
         <Route path='/' element={<DiaryList />}/>
         <Route path='/analysis' element={<SentimentReport/>}/>
+        <Route path='/create-diary' element={<CreateDiary/>}/>
       </Routes>
     </div>
   );

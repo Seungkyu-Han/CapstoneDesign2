@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './DiaryList.css';
 import { TimeSelect } from '../components/TimeSelect';
 
@@ -6,6 +7,7 @@ function DiaryList() {
   const [data, setData] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?userId=1&year=${year}&month=${month}`,
@@ -23,12 +25,15 @@ function DiaryList() {
     setYear(parseInt(document.getElementById('yearSelect').value));
     setMonth(parseInt(document.getElementById('monthSelect').value));
   };
+  const handleCreateDiaryClick = () => {
+    navigate('/create-diary');
+  };
 
   return (
     <div className="diary-list-container">
       <div className="diary-list-header">
-        <TimeSelect handleTimeSelectChange={handleTimeSelectChange}/>
-        <button className="create-diary-btn">일기 작성</button>
+        <TimeSelect handleTimeSelectChange={handleTimeSelectChange} year={year} month={month}/>
+        <button className="create-diary-btn" onClick={handleCreateDiaryClick}>일기 작성</button>
       </div>
       {data.length > 0 ? (
         <div className="diary-list-main">{
