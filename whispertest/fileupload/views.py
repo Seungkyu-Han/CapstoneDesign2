@@ -239,8 +239,6 @@ def naver_sentiment(request):
         content = file.read().decode('utf-8')
         
         # 감정 분석 API로 요청을 보내고 응답을 받습니다.
-        # 여기서는 예시로 'your_sentiment_analysis_api_url'을 사용합니다.
-        # 실제 URL과 키는 해당 API 제공자에 따라 달라집니다.
         data = {
             "content": content[:min(len(content), 900)]
         }
