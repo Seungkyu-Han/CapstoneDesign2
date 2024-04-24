@@ -41,7 +41,7 @@
     position: relative;
     background-color: #FF407D;
     height: 100%;
-    width: 10px;
+    width: 8px;
     border-radius: 50px;
     margin: 0 3px;
     animation: shrink 1s linear infinite;
