@@ -21,6 +21,8 @@ with open(secrets_file_path) as f:
 
 SECRET_KEY = secrets["SECRET_KEY"]
 API_KEY = secrets["API_KEY"]
+CLIENT_ID = secrets["client_id"]
+CLIENT_SECRET = secrets["client_secret"]
 
 class ClovaSpeechClient:
     # Clova Speech invoke URL
@@ -214,6 +216,44 @@ def upload_and_clovatranscribe(request):
     else:
         form = UploadFileForm()
     return render(request, 'fileupload/clova_file_upload.html', {'form': form})
+
+
+
+@csrf_exempt
+def naver_sentiment(request):
+    url = "https://naveropenapi.apigw.ntruss.com/sentiment-analysis/v1/analyze"
+    headers = {
+        "X-NCP-APIGW-API-KEY-ID": CLIENT_ID,
+        "X-NCP-APIGW-API-KEY": CLIENT_SECRET,
+        "Content-Type": "application/json"
+    }
+
+    if request.method == 'POST':
+        # 파일 객체를 얻습니다.
+        form = UploadFileForm(request.POST, request.FILES)
+        file = request.FILES.get('file')
+        if not file:
+            return JsonResponse({'error': 'No file provided'}, status=400)
+        
+        # 파일에서 텍스트를 읽습니다.
+        content = file.read().decode('utf-8')
+        
+        # 감정 분석 API로 요청을 보내고 응답을 받습니다.
+        data = {
+            "content": content[:min(len(content), 900)]
+        }
+        response = requests.post(url, data=json.dumps(data), headers=headers)
+        result = json.loads(response.text)
+        if response.status_code == 200:
+            # API의 응답 결과를 클라이언트에게 전달합니다.
+            sentiment_result = result["document"]["sentiment"]
+            return HttpResponse(sentiment_result, content_type="text/plain")
+        
+    else:
+        form = UploadFileForm()
+    return render(request, 'fileupload/naver_sentiment.html', {'form': form})
+
+
 
 
 def post_list(request):
