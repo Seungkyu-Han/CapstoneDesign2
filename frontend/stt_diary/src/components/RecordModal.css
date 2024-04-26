@@ -23,13 +23,13 @@
 .p1{
     font-size: 16px;
     color: #9695A1;
-    margin-bottom: 25px;
+    margin-bottom: 2vh;
 }
 .p2{
     font-size: 13px;
     color: #FF407D;
     margin-top: 5px;
-    margin-bottom: 30px ;
+    margin-bottom: 4vh ;
 }
 .record-loading-icon{
     height: 60px;
@@ -80,4 +80,17 @@
 .save-record-button img{
     width: 12px;
     height: 12px;
+}
+
+@media screen and (max-width: 992px) {
+    .modal-content {
+        width: 50%;
+        height: 40%;
+    }
+}
+@media screen and (max-width: 576px) {
+    .modal-content {
+        width: 75%;
+        height: 35%;
+    }
 }
