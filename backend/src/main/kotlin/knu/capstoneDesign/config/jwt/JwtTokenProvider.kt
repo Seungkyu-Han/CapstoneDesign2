@@ -40,7 +40,7 @@ class JwtTokenProvider(
 
     fun createJwtToken(id: Long, type: String, tokenValidTime: Long): String{
         val claims = Jwts.claims()
-        claims["d"] = id
+        claims["id"] = id
 
         return Jwts.builder()
             .setHeaderParam("type", type)
