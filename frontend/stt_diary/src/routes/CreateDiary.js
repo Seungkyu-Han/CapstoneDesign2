@@ -57,19 +57,21 @@ function CreateDiary() {
     };
 
     return (
-        <div className='create-diary-wrapper'>
-            <span className="diary-create-date">{formattedDate}</span>
-            <input className="diary-create-title" type="text" placeholder="제목을 입력하세요." />
-            <textarea className="diary-create-content " placeholder="일기 내용을 입력하세요."></textarea>
-            <div className="button-container">
-                <button className="cancel-button" onClick={handleCancelButton}>취소</button>
-                <div className="record-button" onClick={handleRecordButton}>
-                    <img src={require('../assets/record-icon.png')} alt=""/>
+        <div className='create-diary-container'>
+            <div className='create-diary-wrapper'>
+                <span className="diary-create-date">{formattedDate}</span>
+                <input className="diary-create-title" type="text" placeholder="제목을 입력하세요." />
+                <textarea className="diary-create-content " placeholder="일기 내용을 입력하세요."></textarea>
+                <div className="button-container">
+                    <button className="cancel-button" onClick={handleCancelButton}>취소</button>
+                    <div className="record-button" onClick={handleRecordButton}>
+                        <img src={require('../assets/record-icon.png')} alt=""/>
+                    </div>
+                    <button className="save-button" onClick={handleSaveButton}>저장</button>
                 </div>
-                <button className="save-button" onClick={handleSaveButton}>저장</button>
+                {isRecordModalOpen && <RecordModal setIsRecordModalOpen={setIsRecordModalOpen} />}
+                {isLoadingModalOpen && <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />}
             </div>
-            {isRecordModalOpen && <RecordModal setIsRecordModalOpen={setIsRecordModalOpen} />}
-            {isLoadingModalOpen && <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />}
         </div>
     );
 }
