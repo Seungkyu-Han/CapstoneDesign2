@@ -8,6 +8,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.23"
 	kotlin("plugin.jpa") version "1.9.23"
 	kotlin("kapt") version "1.9.23"
+	kotlin("plugin.serialization") version "1.5.31"
 	idea
 }
 
@@ -60,6 +61,10 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+
+	//json
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 }
 
 tasks.withType<KotlinCompile> {
