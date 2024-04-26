@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import knu.capstoneDesign.application.AuthService
 import knu.capstoneDesign.data.dto.auth.res.AuthLoginRes
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,5 +28,14 @@ class AuthController(private val authService: AuthService) {
     )
     fun getLogin(@RequestParam code: String): ResponseEntity<AuthLoginRes> {
         return authService.getLogin(code)
+    }
+
+    @PatchMapping("/login")
+    @Operation(summary = "AccessToken 갱신 API", description = "RefreshToken 사용해서 AccessToken 갱신")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = AuthLoginRes::class))))
+    )
+    fun patchLogin(@Parameter(hidden = true) @RequestHeader("Authorization") refreshToken: String):ResponseEntity<AuthLoginRes>{
+        return authService.patchLogin(refreshToken)
     }
 }

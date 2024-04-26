@@ -5,4 +5,5 @@ import knu.capstoneDesign.repository.custom.UserRepositoryCustom
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository: JpaRepository<User, Long>, UserRepositoryCustom {
+    fun findByRefreshToken(refreshToken: String): User
 }

@@ -34,18 +34,30 @@ class AuthServiceImpl(
 
         val authKakaoInfoRes = getIdByKakao(kakaoAccessToken) ?: throw NullPointerException()
 
-        val user = userRepository.findById(authKakaoInfoRes.id)
+        val optionalUser = userRepository.findById(authKakaoInfoRes.id)
 
-        if (user.isEmpty)
+        if (optionalUser.isEmpty)
             return register(authKakaoInfoRes)
 
         val accessToken = jwtTokenProvider.createAccessToken(authKakaoInfoRes.id)
         val refreshToken = jwtTokenProvider.createRefreshToken(authKakaoInfoRes.id)
 
-        user.get().refreshToken = refreshToken
-        userRepository.save(user.get())
+        val user = optionalUser.get()
+        user.refreshToken = refreshToken
+        userRepository.save(user)
 
         return ResponseEntity.ok(AuthLoginRes(refreshToken = refreshToken, accessToken = accessToken))
+    }
+
+    override fun patchLogin(refreshToken: String): ResponseEntity<AuthLoginRes> {
+
+        val token = refreshToken.split(" ")[1]
+        println(token)
+        val user = userRepository.findByRefreshToken(token)
+
+        val accessToken = jwtTokenProvider.createAccessToken(user.id)
+
+        return ResponseEntity.ok(AuthLoginRes(refreshToken = token, accessToken = accessToken))
     }
 
     private fun register(authKakaoInfoRes: AuthKakaoInfoRes): ResponseEntity<AuthLoginRes>{
