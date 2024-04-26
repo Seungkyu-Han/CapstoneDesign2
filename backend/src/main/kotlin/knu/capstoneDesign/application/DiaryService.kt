@@ -13,7 +13,7 @@ interface DiaryService {
     fun get(id: Int):ResponseEntity<DiaryGetRes>
     fun patch(diaryPatchReq: DiaryPatchReq): ResponseEntity<HttpStatusCode>
     fun delete(id: Int): ResponseEntity<HttpStatusCode>
-    fun getList(userId: Int, startDate: LocalDate, endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>
-    fun getMonth(userId: Int, year: Int, month: Int): ResponseEntity<List<DiaryGetListRes>>
-    fun getAll(userId: Int): ResponseEntity<List<DiaryGetListRes>>
+    fun getList(userId: Long, startDate: LocalDate, endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>
+    fun getMonth(userId: Long, year: Int, month: Int): ResponseEntity<List<DiaryGetListRes>>
+    fun getAll(userId: Long): ResponseEntity<List<DiaryGetListRes>>
 }

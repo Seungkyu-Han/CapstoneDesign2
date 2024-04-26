@@ -28,7 +28,7 @@ class DiaryTest(
     private val diaryService: DiaryService
 ){
 
-    private val testUser = User(id = Int.MAX_VALUE, name = "test")
+    private val testUser = User(id = Long.MAX_VALUE, name = "test", refreshToken = "")
 
     private final val today: LocalDate = LocalDate.now()
     private final val testContent = "테스트 일기입니다."

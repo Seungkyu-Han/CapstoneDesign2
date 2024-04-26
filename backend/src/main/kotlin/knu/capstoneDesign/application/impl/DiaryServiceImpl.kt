@@ -67,7 +67,7 @@ class DiaryServiceImpl(
     }
 
     override fun getList(
-        userId: Int,
+        userId: Long,
         startDate: LocalDate,
         endDate: LocalDate
     ): ResponseEntity<List<DiaryGetListRes>> {
@@ -77,19 +77,19 @@ class DiaryServiceImpl(
             .body(diaryRepository.findByUserIdAndDateBetween(userId, startDate, endDate))
     }
 
-    override fun getMonth(userId: Int, year: Int, month: Int): ResponseEntity<List<DiaryGetListRes>> {
+    override fun getMonth(userId: Long, year: Int, month: Int): ResponseEntity<List<DiaryGetListRes>> {
         val startDate = YearMonth.of(year, month).atDay(1)
         val endDate = YearMonth.of(year, month).atEndOfMonth()
         return this.getList(userId, startDate, endDate)
     }
 
-    override fun getAll(userId: Int): ResponseEntity<List<DiaryGetListRes>> {
+    override fun getAll(userId: Long): ResponseEntity<List<DiaryGetListRes>> {
         return ResponseEntity
             .ok()
             .body(diaryRepository.findByUserId(userId))
     }
 
-    private fun getEmptyUserById(id: Int): User{
-        return User(id = id, name = null)
+    private fun getEmptyUserById(id: Long): User{
+        return User(id = id, name = null, refreshToken = null)
     }
 }

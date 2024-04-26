@@ -12,7 +12,7 @@ import java.time.LocalDate
 class DiaryQueryDsl(private val jpaQueryFactory: JPAQueryFactory): DiaryRepositoryCustom {
 
     override fun findByUserIdAndDateBetween(
-        userId: Int,
+        userId: Long,
         startDate: LocalDate,
         endDate: LocalDate
     ): List<DiaryGetListRes> {
@@ -25,7 +25,7 @@ class DiaryQueryDsl(private val jpaQueryFactory: JPAQueryFactory): DiaryReposito
             .fetch()
     }
 
-    override fun findByUserId(userId: Int): List<DiaryGetListRes> {
+    override fun findByUserId(userId: Long): List<DiaryGetListRes> {
         return jpaQueryFactory.select(QDiaryGetListRes(diary.id, diary.date, diary.title, diary.content))
             .from(diary)
             .where(

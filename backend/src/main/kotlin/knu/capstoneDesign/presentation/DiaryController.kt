@@ -68,7 +68,7 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun getList(@RequestParam userId: Int, @RequestParam startDate: LocalDate, @RequestParam endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>{
+    fun getList(@RequestParam userId: Long, @RequestParam startDate: LocalDate, @RequestParam endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>{
         return diaryService.getList(userId, startDate, endDate)
     }
 
@@ -77,7 +77,7 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun getMonth(@RequestParam userId: Int, @RequestParam year: Int, @RequestParam month: Int): ResponseEntity<List<DiaryGetListRes>>{
+    fun getMonth(@RequestParam userId: Long, @RequestParam year: Int, @RequestParam month: Int): ResponseEntity<List<DiaryGetListRes>>{
         return diaryService.getMonth(userId, year, month)
     }
 
@@ -86,7 +86,7 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun getAll(@RequestParam userId:Int): ResponseEntity<List<DiaryGetListRes>>{
+    fun getAll(@RequestParam userId:Long): ResponseEntity<List<DiaryGetListRes>>{
         return diaryService.getAll(userId)
     }
 
