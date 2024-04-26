@@ -7,10 +7,12 @@ import jakarta.persistence.Id
 @Entity
 data class User(
     @Id
-    var id:Int,
+    var id:Long,
 
     @Column(length = 20)
-    var name: String?
+    var name: String?,
+
+    var refreshToken: String?
 ){
-    constructor(id: Int): this(id=id, name=null)
+    constructor(id: Long): this(id=id, name=null, refreshToken = null)
 }

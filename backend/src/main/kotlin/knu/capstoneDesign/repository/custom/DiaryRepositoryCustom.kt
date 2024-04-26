@@ -5,6 +5,6 @@ import java.time.LocalDate
 
 interface DiaryRepositoryCustom {
 
-    fun findByUserIdAndDateBetween(userId: Int, startDate: LocalDate, endDate: LocalDate): List<DiaryGetListRes>
-    fun findByUserId(userId: Int): List<DiaryGetListRes>
+    fun findByUserIdAndDateBetween(userId: Long, startDate: LocalDate, endDate: LocalDate): List<DiaryGetListRes>
+    fun findByUserId(userId: Long): List<DiaryGetListRes>
 }
