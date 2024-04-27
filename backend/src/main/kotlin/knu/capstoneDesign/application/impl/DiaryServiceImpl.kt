@@ -11,14 +11,12 @@ import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.NullPointerException
 import java.time.LocalDate
 import java.time.YearMonth
 
-@Service
-class DiaryServiceImpl(
+open class DiaryServiceImpl(
     private val userRepository: UserRepository,
     private val diaryRepository: DiaryRepository):DiaryService {
 
