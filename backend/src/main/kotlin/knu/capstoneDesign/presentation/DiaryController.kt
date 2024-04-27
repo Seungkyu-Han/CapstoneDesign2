@@ -1,17 +1,19 @@
 package knu.capstoneDesign.presentation
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
-import knu.capstoneDesign.application.DiaryService
+import knu.capstoneDesign.application.authImpl.DiaryServiceAuthImpl
 import knu.capstoneDesign.data.dto.diary.req.DiaryPatchReq
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -25,15 +27,15 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/api/diary")
 @Tag(name = "일기")
-class DiaryController(private val diaryService: DiaryService) {
+class DiaryController(private val diaryService: DiaryServiceAuthImpl) {
 
     @PostMapping
     @Operation(summary = "일기 등록 API")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun post(@RequestBody diaryPostReq: DiaryPostReq):ResponseEntity<HttpStatusCode>{
-        return diaryService.post(diaryPostReq)
+    fun post(@RequestBody diaryPostReq: DiaryPostReq, @Parameter(hidden = true) authentication: Authentication):ResponseEntity<HttpStatusCode>{
+        return diaryService.post(diaryPostReq, authentication)
     }
 
     @GetMapping
@@ -41,8 +43,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun get(@RequestParam id: Int):ResponseEntity<DiaryGetRes>{
-        return diaryService.get(id)
+    fun get(@RequestParam id: Int, @Parameter(hidden = true) authentication: Authentication):ResponseEntity<DiaryGetRes>{
+        return diaryService.get(id, authentication)
     }
 
     @PatchMapping
@@ -50,8 +52,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun patch(@RequestBody diaryPatchReq: DiaryPatchReq):ResponseEntity<HttpStatusCode>{
-        return diaryService.patch(diaryPatchReq)
+    fun patch(@RequestBody diaryPatchReq: DiaryPatchReq, @Parameter(hidden = true) authentication: Authentication):ResponseEntity<HttpStatusCode>{
+        return diaryService.patch(diaryPatchReq, authentication)
     }
 
     @DeleteMapping
@@ -59,8 +61,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun delete(@RequestParam id:Int): ResponseEntity<HttpStatusCode>{
-        return diaryService.delete(id)
+    fun delete(@RequestParam id:Int, @Parameter(hidden = true) authentication: Authentication): ResponseEntity<HttpStatusCode>{
+        return diaryService.delete(id, authentication)
     }
 
     @GetMapping("/list")
@@ -68,8 +70,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun getList(@RequestParam userId: Long, @RequestParam startDate: LocalDate, @RequestParam endDate: LocalDate): ResponseEntity<List<DiaryGetListRes>>{
-        return diaryService.getList(userId, startDate, endDate)
+    fun getList(@RequestParam startDate: LocalDate, @RequestParam endDate: LocalDate, @Parameter(hidden = true) authentication: Authentication): ResponseEntity<List<DiaryGetListRes>>{
+        return diaryService.getList(startDate, endDate, authentication)
     }
 
     @GetMapping("/month")
@@ -77,8 +79,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun getMonth(@RequestParam userId: Long, @RequestParam year: Int, @RequestParam month: Int): ResponseEntity<List<DiaryGetListRes>>{
-        return diaryService.getMonth(userId, year, month)
+    fun getMonth(@RequestParam year: Int, @RequestParam month: Int, @Parameter(hidden = true) authentication: Authentication): ResponseEntity<List<DiaryGetListRes>>{
+        return diaryService.getMonth(year, month, authentication)
     }
 
     @GetMapping("/all")
@@ -86,8 +88,8 @@ class DiaryController(private val diaryService: DiaryService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun getAll(@RequestParam userId:Long): ResponseEntity<List<DiaryGetListRes>>{
-        return diaryService.getAll(userId)
+    fun getAll(@Parameter(hidden = true) authentication: Authentication): ResponseEntity<List<DiaryGetListRes>>{
+        return diaryService.getAll(authentication)
     }
 
 }
