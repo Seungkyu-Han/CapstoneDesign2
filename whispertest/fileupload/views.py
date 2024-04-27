@@ -219,7 +219,7 @@ def upload_and_clovatranscribe(request):
 
 
 
-@csrf_exempt
+'''@csrf_exempt
 def naver_sentiment(request):
     url = "https://naveropenapi.apigw.ntruss.com/sentiment-analysis/v1/analyze"
     headers = {
@@ -251,7 +251,40 @@ def naver_sentiment(request):
         
     else:
         form = UploadFileForm()
-    return render(request, 'fileupload/naver_sentiment.html', {'form': form})
+    return render(request, 'fileupload/naver_sentiment.html', {'form': form})'''
+
+@csrf_exempt  # CSRF 토큰이 필요없는 경우 사용, API 서버의 경우 일반적
+def naver_sentiment(request):
+    url = "https://naveropenapi.apigw.ntruss.com/sentiment-analysis/v1/analyze"
+    headers = {
+        "X-NCP-APIGW-API-KEY-ID": CLIENT_ID,
+        "X-NCP-APIGW-API-KEY": CLIENT_SECRET,
+        "Content-Type": "application/json"
+    }
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            content = data.get('content')
+            if not content:
+                return JsonResponse({'error': 'No content provided'}, status=400)
+
+            # 내용을 900자로 제한합니다.
+            data = {
+                "content": content[:900]
+            }
+            response = requests.post(url, data=json.dumps(data), headers=headers)
+            result = json.loads(response.text)
+            if response.status_code == 200:
+                # API 응답 결과를 클라이언트에게 전달합니다.
+                sentiment_result = result["document"]["sentiment"]
+                return HttpResponse(sentiment_result, content_type="text/plain")
+            else:
+                return JsonResponse({'error': 'Failed to analyze sentiment'}, status=response.status_code)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Only POST method is supported'}, status=405)
 
 
 
