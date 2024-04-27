@@ -20,9 +20,15 @@ function CreateDiary() {
     const handleCancelButton = () => {
         navigate('/')
     }
+    const inputTitle = (e) => {
+        const inputString = e.target.innerText;
+        if (inputString.trim() === '제목을 입력하세요.') {
+            e.target.innerText = '';
+        }
+    }
     
     const handleSaveButton = () => {
-        const title = document.querySelector('.diary-create-title').value;
+        const title = document.querySelector('.diary-create-title').innerText;
         const content = document.querySelector('.diary-create-content').value;
         const date = currentDate.toISOString().split('T')[0];
         if (title === '') {
@@ -60,7 +66,7 @@ function CreateDiary() {
         <div className='create-diary-container'>
             <div className='create-diary-wrapper'>
                 <span className="diary-create-date">{formattedDate}</span>
-                <input className="diary-create-title" type="text" placeholder="제목을 입력하세요." />
+                <div className="diary-create-title" contentEditable="true" onClick={inputTitle} suppressContentEditableWarning={true}>제목을 입력하세요.</div>
                 <textarea className="diary-create-content " placeholder="일기 내용을 입력하세요."></textarea>
                 <div className="button-container">
                     <button className="cancel-button" onClick={handleCancelButton}>취소</button>
