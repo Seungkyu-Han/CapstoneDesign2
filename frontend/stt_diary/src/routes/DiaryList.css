@@ -1,4 +1,3 @@
-
 .diary-list-container {
   margin: 2% 8%;
 }
@@ -67,6 +66,10 @@
   border: none;
   overflow: hidden;
   position: relative;
+}
+.diary-link {
+  text-decoration: none;
+  color: inherit;
 }
 .diary-color {
   height: 35%;
