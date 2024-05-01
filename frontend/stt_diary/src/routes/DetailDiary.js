@@ -98,6 +98,18 @@ function DetailDiary() {
         const dateArray = diaryData.date.split('-');
         const weekDay = new Date(diaryData.date).getDay();
         const formattedDate = `${dateArray[0]}년 ${dateArray[1]}월 ${dateArray[2]}일. ${getDayOfWeek(weekDay)}`;
+        const titleLines = diaryData.title.split('\n').map((line, index) => {
+            if (index !== diaryData.title.length - 1) {
+                return (
+                    <div key={index}>
+                        {line}
+                        <br />
+                    </div>
+                );
+            } else {
+                return line;
+            }
+        });
         return (
             <div className='detail-diary-container'>
                 <div className="diary-content-wrapper">
@@ -111,7 +123,7 @@ function DetailDiary() {
                             <button className='modifyBtn' onClick={handleModifyDiary}>수정</button>
                         </div>
                     </div>
-                    <div className="detail-title" contentEditable="false" suppressContentEditableWarning={true}>{diaryData.title}</div>
+                    <div className="detail-title" contentEditable="false" suppressContentEditableWarning={true}>{titleLines}</div>
                     <textarea className="detail-content" defaultValue={diaryData.content} readOnly/>
                 </div>
                 <div className="sentiment-wrapper">
