@@ -44,3 +44,16 @@ p{
       transform: rotate(360deg);
     }
 }
+
+@media screen and (max-width: 992px) {
+    .loading-modal-content {
+        width: 50%;
+        height: 40%;
+    }
+}
+@media screen and (max-width: 576px) {
+    .loading-modal-content {
+        width: 75%;
+        height: 35%;
+    }
+}

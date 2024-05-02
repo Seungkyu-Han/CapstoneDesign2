@@ -5,6 +5,7 @@ import DiaryList from './routes/DiaryList';
 import SentimentReport from './routes/SentimentReport';
 import NavigationMenu from './components/NavigationMenu';
 import CreateDiary from './routes/CreateDiary';
+import DetailDiary from './routes/DetailDiary';
 
 function App() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -33,7 +34,8 @@ function App() {
         <Route path='/' element={<DiaryList />}/>
         <Route path='/analysis' element={<SentimentReport/>}/>
         <Route path='/create-diary' element={<CreateDiary/>}/>
-      </Routes>
+        <Route path='/detail-diary/:id' element={<DetailDiary/>}/>
+      </Routes>    
     </div>
   );
 }

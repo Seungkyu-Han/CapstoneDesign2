@@ -1,7 +1,14 @@
+.create-diary-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex:1;
+}
 .create-diary-wrapper {
-    padding: 5% 20%;
     display: flex;
     flex-direction: column;
+    align-self: center;
+    width: 60%;
 }
 .diary-create-date {
     display: flex;
@@ -10,12 +17,14 @@
     color: black;
 }
 .diary-create-title {
-    height: 5vh;
+    height: auto;
+    text-align: left;
+    word-break: break-all;
     border-radius: 15px;
     margin-top: 10px;
     margin-bottom: 20px;
     box-shadow: 0 3px 3px #ccc;
-    padding: 5px 20px;
+    padding: 10px 20px;
     border: 1px solid #000;
     font-weight: bold;
     font-size: 16px;
@@ -74,4 +83,22 @@ input[type="text"]::placeholder {
 .record-button img {
     width: 20px;
     height: 20px;
+}
+@media screen and (max-width: 1200px) {
+    .create-diary-wrapper {
+        width: 70%;
+    }
+    .record-button {
+        margin-right: 6px;
+        margin-left: 6px;
+    }
+}
+@media screen and (max-width: 576px) {
+    .create-diary-wrapper {
+        width: 85%;
+    }
+    .record-button {
+        margin-right: 6px;
+        margin-left: 6px;
+    }
 }
