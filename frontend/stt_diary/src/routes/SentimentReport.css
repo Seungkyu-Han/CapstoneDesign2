@@ -25,6 +25,7 @@
 
 .date {
   position: relative;
+  font-weight: 400;
 }
 
 .date > img {
@@ -65,4 +66,14 @@
   width: 35px;
   margin-right: 10px;
   cursor: pointer;
+}
+
+@media screen and (max-width: 992px) {
+  .calendar {
+    border-radius: 0;
+  }
+
+  .report-wrapper {
+    padding: 0;
+  }
 }

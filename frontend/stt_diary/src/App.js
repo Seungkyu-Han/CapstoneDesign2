@@ -6,6 +6,7 @@ import SentimentReport from './routes/SentimentReport';
 import NavigationMenu from './components/NavigationMenu';
 import CreateDiary from './routes/CreateDiary';
 import Consulting from './routes/Consulting';
+import DetailDiary from './routes/DetailDiary';
 
 function App() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -35,7 +36,8 @@ function App() {
         <Route path='/analysis' element={<SentimentReport/>}/>
         <Route path='/create-diary' element={<CreateDiary/>}/>
         <Route path='/consulting' element={<Consulting/>} />
-      </Routes>
+        <Route path='/detail-diary/:id' element={<DetailDiary/>}/>
+      </Routes>    
     </div>
   );
 }
