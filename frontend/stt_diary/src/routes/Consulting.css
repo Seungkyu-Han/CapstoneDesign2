@@ -1,27 +1,110 @@
-.chat-container-wrapper {
-  padding: 60px 120px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+div {
   box-sizing: border-box;
 }
 
-.chat-container {
-  background: #F8D8DF66;
-  border-radius: 20px;
-  padding: 40px 70px;
+.chat-box-wrapper {
   width: 100%;
   height: 100%;
+  padding: 155px 0 100px 0;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -55px;
+}
+
+.chat-box-wrapper-inner {
+  width: 90%;
+  max-height: 750px;
+  height: 100%;
+}
+
+.chat-box {
+  max-height: 664px;
+  height: 100%;
+  background-color: #FCE6EA;
+  border-radius: 20px;
   position: relative;
 }
 
-.chat-container-inner {
-  margin-bottom: 50px;
+.chat-message-container-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 50px;
+  padding-bottom: 100px;
 }
 
+.chat-message-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.chat-message-container::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-message {
+  margin-bottom: 10px;
+}
+
+.chat-input-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  padding: 20px 0;
+  background-color: #FCE6EA;
+  border-radius: 0 0 20px 20px;
+}
+
+.chat-input-wrap-inner {
+  background-color: #FFFFFF;
+  width: 80%;
+  border: 1px solid #1C54BB;
+  border-radius: 20px;
+  height: 58px;
+  padding: 13px 20px;
+  padding-right: 70px;
+  text-align: left;
+  position: relative;
+  margin: auto;
+}
+
+#chat-input {
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  outline: none;
+}
+
+#submit-btn {
+  background: none;
+  border: none;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.exit-btn-wrapper {
+  height: 86px;
+  padding-top: 20px;
+}
+
+#exit-btn {
+  font-size: 16px;
+  height: 60px;
+  width: 168px;
+  border-radius: 20px;
+  border: none;
+  background-color: #FDA9BB;
+}
+
+/* chat message */
 .chat {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .chat.bot {
@@ -32,97 +115,57 @@
   text-align: right;
 }
 
+.bot-profile {
+  height: 60px;
+  vertical-align: top;
+  margin-right: 10px;
+}
+
+.message {
+  display: inline-block;
+  max-width: 60%;
+  background-color: white;
+  padding: 10px 20px;
+  font-size: 14px;
+  text-align: left;
+}
+
 .bot > .message {
   border-radius: 0 20px 20px 20px;
-} 
+}
 
 .user > .message {
   border-radius: 20px 20px 0 20px;
 }
 
-.message {
-  background-color: #FFFFFF;
-  display: inline-block;
-  vertical-align: top;
-  padding: 17px 20px;
-}
-
-.chat-profile {
-  width: 68px;
-  margin-right: 15px;
-}
-
-.chat-input-wrapper {
-  padding: 0 160px;
-  width: 70%;
-  box-sizing: border-box;
-  position: absolute;
-  left: 50%;
-  bottom: 40px;
-  transform: translateX(-50%);
-}
-
-.chat-input-inner {
-  position: relative;
-  width: 100%;
-  border: 1px solid #1C54BB;
-  display: flex;
-  border-radius: 20px;
-  padding: 5px 20px;
-  box-sizing: border-box;
-  background-color: white;
-}
-
-#chat-input {
-  font-size: 16px;
-  width: 100%;
-  height: 46px;
-  border: none;
-  outline: none;
-}
-
-#submit-btn {
-  background: none;
-  border: none;
-  margin-left: 12px;
-  cursor: pointer;
-}
-
-#exit-btn {
-  background-color: #FDA9BB;
-  border-radius: 30px;
-  border: none;
-  width: 170px;
-  height: 66px;
-  font-size: 20px;
-  margin-top: 20px;
-  cursor: pointer;
-}
-
-@media screen and (max-width: 1400px) {
-  .chat-input-wrapper {
-    padding: 0 100px;
-  }
-}
-
 @media screen and (max-width: 992px) {
-  .chat-container-wrapper {
+  .chat-box-wrapper {
+    width: 100%;
+    height: 100%;
     padding: 0;
+    padding-top: 55px;
+    margin-top: -55px;
   }
 
-  .chat-container {
+  .chat-box-wrapper-inner {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .chat-box {
+    width: 100%;
+    height: 100%;
+    max-height: none;
     border-radius: 0;
   }
 
-  .chat-input-wrapper {
-    padding: 0 35px;
-  }
-
-  .chat-profile {
-    width: 40px;
-  }
-
-  #exit-btn {
+  .exit-btn-wrapper {
     display: none;
+  }
+
+  .bot-profile {
+    height: 40px;
+    margin-right: 5px;
   }
 }
