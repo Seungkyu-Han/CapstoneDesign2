@@ -160,6 +160,11 @@ div {
     border-radius: 0;
   }
 
+  .chat-message-container-wrapper {
+    padding: 20px;
+    padding-bottom: 50px;
+  }
+
   .exit-btn-wrapper {
     display: none;
   }
