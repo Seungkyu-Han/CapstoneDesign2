@@ -25,6 +25,7 @@ div {
   background-color: #FCE6EA;
   border-radius: 20px;
   position: relative;
+  text-align: left;
 }
 
 .chat-message-container-wrapper {
@@ -138,6 +139,15 @@ div {
   border-radius: 20px 20px 0 20px;
 }
 
+#mobile-exit-btn {
+  background: none;
+  border: none;
+  position: absolute;
+  left: 16px;
+  top: 10px;
+  display: none;
+}
+
 @media screen and (max-width: 992px) {
   .chat-box-wrapper {
     width: 100%;
@@ -163,6 +173,7 @@ div {
   .chat-message-container-wrapper {
     padding: 20px;
     padding-bottom: 50px;
+    padding-top: 50px;
   }
 
   .exit-btn-wrapper {
@@ -172,5 +183,9 @@ div {
   .bot-profile {
     height: 40px;
     margin-right: 5px;
+  }
+
+  #mobile-exit-btn {
+    display: inline-block;
   }
 }

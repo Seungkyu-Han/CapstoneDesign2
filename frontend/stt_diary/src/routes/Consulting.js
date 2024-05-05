@@ -14,6 +14,9 @@ function Consulting() {
     <div className='chat-box-wrapper'>
       <div className='chat-box-wrapper-inner'>
         <div className='chat-box'>
+          <button id='mobile-exit-btn'>
+            <img src={require('../assets/arrow_back.png')} />
+          </button>
           <div className='chat-message-container-wrapper'>
             <div className='chat-message-container'>
               <div className='chat-message'>
