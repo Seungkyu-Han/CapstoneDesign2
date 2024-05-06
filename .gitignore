@@ -17,6 +17,7 @@
 /frontend/stt_diary/.env.development.local
 /frontend/stt_diary/.env.test.local
 /frontend/stt_diary/.env.production.local
+.DS_Store
 
 /frontend/stt_diary/npm-debug.log*
 /frontend/stt_diary/yarn-debug.log*
@@ -24,3 +25,4 @@
 
 # env
 /frontend/stt_diary/.env
+.DS_Store

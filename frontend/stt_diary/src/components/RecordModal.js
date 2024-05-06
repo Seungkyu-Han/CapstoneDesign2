@@ -12,7 +12,7 @@ function RecordModal({setIsRecordModalOpen }) {
         <div className='modal-wrapper' onClick={closeModal}>
             <div className="modal-content">
                 <p className='p1'>말씀 해주세요 ...</p>
-                <div class="record-loading-icon">
+                <div className="record-loading-icon">
                     <span className='stroke'></span>
                     <span className='stroke'></span>
                     <span className='stroke'></span>

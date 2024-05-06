@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DiaryList.css';
 import { TimeSelect } from '../components/TimeSelect';
+import { Link } from 'react-router-dom';
 
 function DiaryList() {
   const [data, setData] = useState([]);
@@ -41,12 +42,14 @@ function DiaryList() {
               let dates = item.date.split('-');
               return (
                 <div key={i} className="diary-wrapper">
-                  <div className="diary-color"></div>
-                  <div className="diary-date">{dates[0]}년 {dates[1]}월 {dates[2]}일</div>
-                  <div className="diary-content">
-                    <div className="diary-title">{item.title}</div>
-                    <div className="diary-text">{item.content}</div>
-                  </div>
+                  <Link to={`/detail-diary/${item.id}`} className='diary-link'>
+                    <div className="diary-color"></div>
+                    <div className="diary-date">{dates[0]}년 {dates[1]}월 {dates[2]}일</div>
+                    <div className="diary-content">
+                      <div className="diary-title">{item.title}</div>
+                      <div className="diary-text">{item.content}</div>
+                    </div>
+                  </Link>
                 </div>
               )})
           }
