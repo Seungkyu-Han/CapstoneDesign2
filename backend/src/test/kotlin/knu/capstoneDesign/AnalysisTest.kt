@@ -1,6 +1,6 @@
 package knu.capstoneDesign
 
-import knu.capstoneDesign.application.impl.FeelingServiceImpl
+import knu.capstoneDesign.application.impl.AnalysisServiceImpl
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -9,9 +9,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
-class FeelingTest(
+class AnalysisTest(
     @Autowired
-    @Qualifier("feelingServiceImpl") private val feelingService: FeelingServiceImpl
+    @Qualifier("analysisServiceImpl") private val analysisService: AnalysisServiceImpl
 ) {
 
 }
