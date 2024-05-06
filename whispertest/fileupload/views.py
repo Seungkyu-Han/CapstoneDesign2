@@ -253,7 +253,7 @@ def naver_sentiment(request):
         form = UploadFileForm()
     return render(request, 'fileupload/naver_sentiment.html', {'form': form})'''
 
-@csrf_exempt  # CSRF 토큰이 필요없는 경우 사용, API 서버의 경우 일반적
+@csrf_exempt
 def naver_sentiment(request):
     url = "https://naveropenapi.apigw.ntruss.com/sentiment-analysis/v1/analyze"
     headers = {
@@ -285,6 +285,40 @@ def naver_sentiment(request):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'error': 'Only POST method is supported'}, status=405)
+
+
+
+@csrf_exempt
+def chatgpt_completion(request):
+    client = OpenAI(api_key=API_KEY)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            content = data.get('content')
+            if not content:
+                return JsonResponse({'error': 'No content provided'}, status=400)
+            
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": content,
+                    }
+                ],
+                model="gpt-3.5-turbo",
+            )
+
+            response = chat_completion.choices[0].message.content
+            return HttpResponse(response, content_type="text/plain")
+            #return JsonResponse({'response': response}, status=200)
+        
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Only POST method is supported'}, status=405)
+
+
+
 
 
 
