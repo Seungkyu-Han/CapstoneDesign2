@@ -25,3 +25,4 @@
 
 # env
 /frontend/stt_diary/.env
+.DS_Store

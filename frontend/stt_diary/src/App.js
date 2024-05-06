@@ -5,6 +5,7 @@ import DiaryList from './routes/DiaryList';
 import SentimentReport from './routes/SentimentReport';
 import NavigationMenu from './components/NavigationMenu';
 import CreateDiary from './routes/CreateDiary';
+import Consulting from './routes/Consulting';
 import DetailDiary from './routes/DetailDiary';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Route path='/' element={<DiaryList />}/>
         <Route path='/analysis' element={<SentimentReport/>}/>
         <Route path='/create-diary' element={<CreateDiary/>}/>
+        <Route path='/consulting' element={<Consulting/>} />
         <Route path='/detail-diary/:id' element={<DetailDiary/>}/>
       </Routes>    
     </div>
