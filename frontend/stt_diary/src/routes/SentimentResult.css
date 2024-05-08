@@ -1,0 +1,97 @@
+
+.sentiment-result-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.positive-container,
+.negative-container,
+.neutral-container{
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 35%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 40px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+}
+.positive-container{
+    background-image: url('../assets/positive-background.png');
+}
+.negative-container{
+    background-image: url('../assets/negative-background.png');
+}
+.neutral-container{
+    background-image: url('../assets/neutral-background.png');
+}
+.result-title-container{
+    position: absolute;
+    bottom: 46%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    padding: 8px 40px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+}
+.result-content{
+    height: 35%;
+    background-color: #fff;
+    margin-top: auto;
+    border-radius: 40px;
+    padding: 50px 80px;
+    position: relative;
+    font-size: 14px;
+}
+.result-content-negative {
+    height: 35%;
+    background-color: #fff;
+    margin-top: auto;
+    border-radius: 40px;
+    padding: 50px 80px;
+    position: relative;
+    font-size: 14px;
+}
+.result-content-negative p{
+    text-align: left;
+    color: #000;
+}
+.result-content-negative .consulting-btn{
+    border: none;
+    padding: 10px 30px;
+    color: #fff;
+    background-color: #4E66E6;
+    border-radius: 20px;
+    font-size: 16px;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+.title1{
+    font-size: 18px;
+    font-weight: 500;
+}
+.title-positive,
+.title-negative,
+.title-neutral{
+    font-size: 25px;
+    font-weight: bold;
+    background-clip: text;
+    color: transparent;
+    margin-left: 10px;
+}
+.title-positive{
+    background-image: linear-gradient(to top, #D2DFFF 0%, #FF407D 100%);
+}
+.title-negative {
+    background-image: linear-gradient(to top, #75CF7E 0%, #303DB1 100%);
+}
+.title-neutral{
+    background-image: linear-gradient(to top, #D1D524 0%, #15C13B 100%);
+}
