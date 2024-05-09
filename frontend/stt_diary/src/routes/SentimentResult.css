@@ -25,7 +25,7 @@
 .neutral{
     background-image: url('../assets/neutral-background.png');
 }
-.result-title-container{
+.result-title{
     position: absolute;
     bottom: 46%;
     left: 50%;
@@ -62,9 +62,8 @@
     transform: translateX(-50%);
     cursor: pointer;
 }
-.title1{
+.result-title {
     font-size: 18px;
-    font-weight: 500;
 }
 .title-positive,
 .title-negative,
@@ -99,7 +98,7 @@
     .result-content{
         padding: 50px 40px;
     }
-    .result-title-container{
+    .result-title{
         padding: 8px 20px;
     }
 
@@ -112,7 +111,7 @@
     .result-content{
         padding: 50px 30px;
     }
-    .result-title-container{
+    .result-title{
         padding: 8px 20px;
         width: 55%;
     }
@@ -126,7 +125,7 @@
     .result-content{
         padding: 50px 25px;
     }
-    .result-title-container{
+    .result-title{
         padding: 8px 0;
         width: 70%;
     }
@@ -139,7 +138,7 @@
     .result-content{
         padding: 50px 25px;
     }
-    .result-title-container{
+    .result-title{
         padding: 8px 0;
         width: 80%;
     }
