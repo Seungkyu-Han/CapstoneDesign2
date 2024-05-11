@@ -20,7 +20,7 @@ open class DiaryServiceImpl(
     private val userRepository: UserRepository,
     private val diaryRepository: DiaryRepository):DiaryService {
 
-    override fun post(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode> {
+    override fun post(diaryPostReq: DiaryPostReq): ResponseEntity<Int> {
 
         val user = getEmptyUserById(diaryPostReq.userId)
 
@@ -35,7 +35,7 @@ open class DiaryServiceImpl(
         diaryRepository.save(diary)
 
 
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok(diary.id)
     }
 
     override fun get(id: Int): ResponseEntity<DiaryGetRes> {

@@ -20,7 +20,7 @@ class DiaryServiceAuthImpl(
     private val diaryRepository: DiaryRepository
 ): DiaryServiceImpl(userRepository, diaryRepository) {
 
-    fun post(diaryPostReq: DiaryPostReq, authentication: Authentication): ResponseEntity<HttpStatusCode> {
+    fun post(diaryPostReq: DiaryPostReq, authentication: Authentication): ResponseEntity<Int> {
         val userId = authentication.name.toLong()
         diaryPostReq.userId = userId
         return super.post(diaryPostReq)

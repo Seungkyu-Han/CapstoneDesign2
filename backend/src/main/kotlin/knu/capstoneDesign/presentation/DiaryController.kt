@@ -34,7 +34,7 @@ class DiaryController(private val diaryService: DiaryServiceAuthImpl) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun post(@RequestBody diaryPostReq: DiaryPostReq, @Parameter(hidden = true) authentication: Authentication):ResponseEntity<HttpStatusCode>{
+    fun post(@RequestBody diaryPostReq: DiaryPostReq, @Parameter(hidden = true) authentication: Authentication):ResponseEntity<Int>{
         return diaryService.post(diaryPostReq, authentication)
     }
 
