@@ -1,16 +1,18 @@
 package knu.capstoneDesign.data.entity
 
 import jakarta.persistence.*
+import knu.capstoneDesign.data.enum.Emotion
 
 @Entity
 data class Analysis(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long?,
+    val id: Long?,
 
     @OneToOne
-    private var diary:Diary,
-    private var isPositive: Boolean,
-    private var summary: String
+    var diary:Diary,
+    @Enumerated(EnumType.STRING)
+    var emotion: Emotion,
+    var summary: String
 
 )
