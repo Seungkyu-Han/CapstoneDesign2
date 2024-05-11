@@ -1,26 +1,37 @@
 package knu.capstoneDesign.application.impl
 
-import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
-import knu.capstoneDesign.data.entity.Diary
-import knu.capstoneDesign.data.entity.User
-import knu.capstoneDesign.repository.DiaryRepository
-import knu.capstoneDesign.repository.UserRepository
 import knu.capstoneDesign.application.DiaryService
 import knu.capstoneDesign.data.dto.diary.req.DiaryPatchReq
+import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
-import org.springframework.http.HttpStatusCode
-import org.springframework.http.ResponseEntity
+import knu.capstoneDesign.data.entity.Analysis
+import knu.capstoneDesign.data.entity.Diary
+import knu.capstoneDesign.data.entity.User
+import knu.capstoneDesign.data.enum.Emotion
+import knu.capstoneDesign.repository.AnalysisRepository
+import knu.capstoneDesign.repository.DiaryRepository
+import knu.capstoneDesign.repository.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.http.*
 import org.springframework.transaction.annotation.Transactional
-import java.lang.NullPointerException
+import org.springframework.web.client.RestTemplate
+import java.net.ConnectException
 import java.time.LocalDate
 import java.time.YearMonth
 
 open class DiaryServiceImpl(
     private val userRepository: UserRepository,
-    private val diaryRepository: DiaryRepository):DiaryService {
+    private val diaryRepository: DiaryRepository,
+    private val analysisRepository: AnalysisRepository,
+    @Value("\${ai.server}")
+    private val aiServerUrl: String):DiaryService {
 
-    override fun post(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode> {
+    override fun post(diaryPostReq: DiaryPostReq): ResponseEntity<Int> {
 
         val user = getEmptyUserById(diaryPostReq.userId)
 
@@ -32,10 +43,23 @@ open class DiaryServiceImpl(
             content = diaryPostReq.content
         )
 
+
         diaryRepository.save(diary)
 
+        kotlinx.coroutines.GlobalScope.launch {
+            val analysisResult = requestAnalysis(diaryPostReq.content ?: "")
+            withContext(Dispatchers.IO) {
+                try{
+                    analysisRepository.save(
+                        Analysis(id = null, diary = diary,
+                            emotion = Emotion.valueOf(analysisResult), "")
+                    )
+                }catch(_: DataIntegrityViolationException){}
+            }
 
-        return ResponseEntity.ok().build()
+        }
+
+        return ResponseEntity.ok(diary.id)
     }
 
     override fun get(id: Int): ResponseEntity<DiaryGetRes> {
@@ -85,6 +109,21 @@ open class DiaryServiceImpl(
         return ResponseEntity
             .ok()
             .body(diaryRepository.findByUserId(userId))
+    }
+
+    private fun requestAnalysis(content: String): String{
+        val restTemplate = RestTemplate()
+
+        val httpHeaders = HttpHeaders()
+        httpHeaders.contentType = MediaType.APPLICATION_JSON
+
+        val request = "{\"content\": \"${content}\"}"
+
+        val requestEntity = HttpEntity(request, httpHeaders)
+
+        val responseEntity = restTemplate.postForEntity(
+            "$aiServerUrl/sentiment", requestEntity, String::class.java)
+        return responseEntity.body ?: throw ConnectException()
     }
 
     private fun getEmptyUserById(id: Long): User{

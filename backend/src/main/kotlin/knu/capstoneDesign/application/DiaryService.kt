@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import java.time.LocalDate
 
 interface DiaryService {
-    fun post(diaryPostReq: DiaryPostReq): ResponseEntity<HttpStatusCode>
+    fun post(diaryPostReq: DiaryPostReq): ResponseEntity<Int>
     fun get(id: Int):ResponseEntity<DiaryGetRes>
     fun patch(diaryPatchReq: DiaryPatchReq): ResponseEntity<HttpStatusCode>
     fun delete(id: Int): ResponseEntity<HttpStatusCode>
