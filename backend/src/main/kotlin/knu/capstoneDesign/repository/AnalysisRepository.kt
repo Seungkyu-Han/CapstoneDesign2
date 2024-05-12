@@ -3,10 +3,19 @@ package knu.capstoneDesign.repository
 import knu.capstoneDesign.data.entity.Analysis
 import knu.capstoneDesign.data.entity.Diary
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import java.time.LocalDate
 import java.util.*
 
 interface AnalysisRepository: JpaRepository<Analysis, Long> {
 
     fun deleteByDiary(diary: Diary)
     fun findByDiary(diary: Diary): Optional<Analysis>
+
+    @Query(
+        "SELECT a FROM Analysis a " +
+                "INNER JOIN a.diary d " +
+                "WHERE d.user.id = :userId AND d.date BETWEEN :startDate and :endDate"
+    )
+    fun findByUserIdAndDateBetween(userId: Long, startDate: LocalDate, endDate: LocalDate): List<Analysis>
 }

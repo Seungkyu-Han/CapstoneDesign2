@@ -1,5 +1,6 @@
 package knu.capstoneDesign.application.impl
 
+import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetMonthRes
 import knu.capstoneDesign.data.entity.Diary
 import knu.capstoneDesign.repository.AnalysisRepository
 import knu.capstoneDesign.repository.DiaryRepository
@@ -7,6 +8,7 @@ import knu.capstoneDesign.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.time.YearMonth
 
 @Service
 class AnalysisServiceImpl(
@@ -20,6 +22,14 @@ class AnalysisServiceImpl(
     fun get(diary: Diary): ResponseEntity<String>{
         val analysis = analysisRepository.findByDiary(diary).orElseThrow{NullPointerException()}
         return ResponseEntity.ok(analysis.emotion.name)
+    }
+
+    fun getMonth(year: Int, month: Int, userId: Long): ResponseEntity<List<AnalysisGetMonthRes>>{
+        val startDate = YearMonth.of(year, month).atDay(1)
+        val endDate = YearMonth.of(year, month).atEndOfMonth()
+
+        return ResponseEntity.ok(analysisRepository.findByUserIdAndDateBetween(userId, startDate, endDate)
+            .map {analysis ->  AnalysisGetMonthRes(diaryId = analysis.diary.id, date = analysis.diary.date, emotion = analysis.emotion)})
     }
 
 }

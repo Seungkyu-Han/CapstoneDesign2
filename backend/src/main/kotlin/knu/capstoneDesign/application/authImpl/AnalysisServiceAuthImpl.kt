@@ -2,6 +2,7 @@ package knu.capstoneDesign.application.authImpl
 
 import knu.capstoneDesign.application.AnalysisService
 import knu.capstoneDesign.application.impl.AnalysisServiceImpl
+import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetMonthRes
 import knu.capstoneDesign.repository.AnalysisRepository
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
@@ -23,5 +24,9 @@ class AnalysisServiceAuthImpl(
         if(diary.user.id != authentication.name.toLong())
             throw NullPointerException()
         return super.get(diary)
+    }
+
+    override fun getMonth(year: Int, month: Int, authentication: Authentication): ResponseEntity<List<AnalysisGetMonthRes>> {
+        return super.getMonth(year, month, authentication.name.toLong())
     }
 }
