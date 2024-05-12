@@ -29,7 +29,8 @@ class AnalysisServiceImpl(
         val endDate = YearMonth.of(year, month).atEndOfMonth()
 
         return ResponseEntity.ok(analysisRepository.findByUserIdAndDateBetween(userId, startDate, endDate)
-            .map {analysis ->  AnalysisGetMonthRes(diaryId = analysis.diary.id, date = analysis.diary.date, emotion = analysis.emotion)})
+            .map {analysis ->  AnalysisGetMonthRes(
+                id = analysis.id, diaryId = analysis.diary.id, date = analysis.diary.date, emotion = analysis.emotion)})
     }
 
 }

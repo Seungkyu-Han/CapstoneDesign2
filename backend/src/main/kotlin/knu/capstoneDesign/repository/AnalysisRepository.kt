@@ -15,7 +15,8 @@ interface AnalysisRepository: JpaRepository<Analysis, Long> {
     @Query(
         "SELECT a FROM Analysis a " +
                 "INNER JOIN a.diary d " +
-                "WHERE d.user.id = :userId AND d.date BETWEEN :startDate and :endDate"
+                "INNER JOIN d.user u " +
+                "WHERE u.id = :userId AND d.date BETWEEN :startDate and :endDate"
     )
     fun findByUserIdAndDateBetween(userId: Long, startDate: LocalDate, endDate: LocalDate): List<Analysis>
 }
