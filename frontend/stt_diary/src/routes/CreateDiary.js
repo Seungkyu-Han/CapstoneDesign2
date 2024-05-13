@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
 import LoadingModal from '../components/LoadingModal';
@@ -53,12 +53,51 @@ function CreateDiary() {
                     date: date,
             })
         })
-        .then(() => {
+        .then((response) => response.json())
+        .then((res) => {
             setIsLoadingModalOpen(true);
+            requestResult(res);
         })
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
         });
+    };
+
+    const requestResult = (diaryId) => {
+        setIsLoadingModalOpen(true);
+        let count = 0;
+        const interval = setInterval(() => {
+            if (count > 14) {
+                clearInterval(interval);
+                setIsLoadingModalOpen(false);
+                alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                navigate('/');
+            } else {
+                fetch(`${process.env.REACT_APP_API_URL}/api/feeling/${diaryId}`,
+                        {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + getCookie('accessToken'),
+                            },
+                        })
+                    .then(response => {
+                        if (response.status === 200) {
+                            clearInterval(interval);
+                            setIsLoadingModalOpen(false);
+                            navigate(`/result/${diaryId}`);
+                        } else {
+                            count++;
+                        }
+                    })
+                    .catch(error => {
+                        clearInterval(interval);
+                        setIsLoadingModalOpen(false);
+                        alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                        navigate('/');
+                    });
+            }
+        }, 500);
     };
 
     const handleRecordButton = () => {
