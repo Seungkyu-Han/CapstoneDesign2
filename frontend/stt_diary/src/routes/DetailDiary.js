@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './DetailDiary.css';
 import LoadingModal from '../components/LoadingModal';
+import { getCookie } from '../utils/cookieManage';
 
 function DetailDiary() {
     const { id } = useParams();
@@ -16,6 +17,7 @@ function DetailDiary() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('accessToken'),
                 },
         })
         .then((response) => response.json())
@@ -38,6 +40,7 @@ function DetailDiary() {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getCookie('accessToken'),
             },
         })
         .then(() => {
@@ -73,6 +76,7 @@ function DetailDiary() {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + getCookie('accessToken'),
                     },
                     body: JSON.stringify({
                         id : id,

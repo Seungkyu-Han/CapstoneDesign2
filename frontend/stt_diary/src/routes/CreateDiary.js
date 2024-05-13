@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
 import LoadingModal from '../components/LoadingModal';
-
+import { getCookie } from '../utils/cookieManage';
 
 function CreateDiary() {
     const currentDate = new Date();
@@ -42,7 +42,10 @@ function CreateDiary() {
         fetch(`${process.env.REACT_APP_API_URL}/api/diary`,
             {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('accessToken'),
+                },
                 body: JSON.stringify({
                     userId : 1,
                     title: title,

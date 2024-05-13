@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './DiaryList.css';
 import { TimeSelect } from '../components/TimeSelect';
 import { Link } from 'react-router-dom';
+import { getCookie } from '../utils/cookieManage';
 
 function DiaryList() {
   const [data, setData] = useState([]);
@@ -13,7 +14,10 @@ function DiaryList() {
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?userId=1&year=${year}&month=${month}`,
         {
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getCookie("accessToken"),
+          },
         })
       .then((response) => response.json())
       .then((data) => {

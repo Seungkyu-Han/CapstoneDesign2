@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { getCookie } from '../utils/cookieManage';
 
 export function TimeSelect({handleTimeSelectChange, year, month}) {
     const [timeData, setTimeData] = useState([]);
     useEffect(() => {
         fetch(`${process.env.REACT_APP_API_URL}/api/diary/all?userId=1`,
             {
-              headers: {'Content-Type': 'application/json'},
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getCookie("accessToken"),
+              },
             })
             .then((response) => response.json())
             .then((data) => {
