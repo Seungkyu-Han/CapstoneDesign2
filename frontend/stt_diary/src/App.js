@@ -49,7 +49,7 @@ function App() {
       setLoggedIn(true);
       navigate('/');
     }
-  },[loggedIn, navigate]);
+  },[loggedIn]);
 
 
   return (
