@@ -9,6 +9,7 @@ import Consulting from './routes/Consulting';
 import DetailDiary from './routes/DetailDiary';
 import SentimentResult from './routes/SentimentResult';
 import Login from './routes/Login';
+import Redirect from './routes/Redirect';
 import { getCookie, setCookie } from './utils/cookieManage'
 
 
@@ -77,6 +78,7 @@ function App() {
         <Route path='/detail-diary/:id' element={<DetailDiary/>}/>
         <Route path='/result' element={<SentimentResult/>}/>
         <Route path='/login' element={<Login/>}/>
+        <Route path='/redirect' element={<Redirect/>}/>
       </Routes>    
     </div>
   );
