@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
 import LoadingModal from '../components/LoadingModal';
@@ -56,11 +56,18 @@ function CreateDiary() {
         .then((response) => response.json())
         .then((res) => {
             setIsLoadingModalOpen(true);
-            requestResult(res);
+            checkResult(res);
         })
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
         });
+    };
+
+    const checkResult = (diaryId) => {
+        setIsLoadingModalOpen(true);
+        setTimeout(() => {
+            requestResult(diaryId);
+        }, 3000);
     };
 
     const requestResult = (diaryId) => {
