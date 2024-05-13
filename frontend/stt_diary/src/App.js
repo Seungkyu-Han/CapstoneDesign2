@@ -76,7 +76,7 @@ function App() {
         <Route path='/create-diary' element={<CreateDiary/>}/>
         <Route path='/consulting' element={<Consulting/>} />
         <Route path='/detail-diary/:id' element={<DetailDiary/>}/>
-        <Route path='/result' element={<SentimentResult/>}/>
+        <Route path='/result/:id' element={<SentimentResult/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/redirect' element={<Redirect/>}/>
       </Routes>    
