@@ -1,0 +1,41 @@
+.login-container{
+    background-color: #FFCAD4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+.login-container .img1{
+    width: 450px;
+    height: auto;
+}
+.login-container .img2{
+    width: 250px;
+    height: auto;
+    margin-top: 20px;
+}
+.login-btn img{
+    width: 250px;
+    height: auto;
+    margin-top: 60px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 576px){
+    .login-container .img1{
+        width: 300px;
+        height: auto;
+    }
+    .login-container .img2{
+        width: 200px;
+        height: auto;
+        margin-top: 20px;
+    }
+    .login-btn img{
+        width: 200px;
+        height: auto;
+        margin-top: 130px;
+        cursor: pointer;
+    }
+}
