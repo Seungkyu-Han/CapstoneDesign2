@@ -25,7 +25,6 @@ function App() {
   useEffect(() => {
     if (!getCookie("accessToken") && !getCookie("refreshToken")) {
       navigate('/login');
-      setLoggedIn(false);
     }
     else if (!getCookie("accessToken")) {
         fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
@@ -39,7 +38,7 @@ function App() {
           .then(res => {
             setCookie("accessToken", res.accessToken, 2 * 60);
             setCookie("refreshToken", res.refreshToken, 24 * 14 * 60);
-            window.location.reload();
+            setLoggedIn(true);
         })
         .catch(error => {
             alert("관리자에게 문의해주세요.");

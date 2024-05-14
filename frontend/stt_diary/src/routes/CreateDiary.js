@@ -47,64 +47,19 @@ function CreateDiary() {
                     'Authorization': 'Bearer ' + getCookie('accessToken'),
                 },
                 body: JSON.stringify({
-                    userId : 1,
                     title: title,
                     content: content,
                     date: date,
             })
         })
-        .then((response) => response.json())
+        .then(response => response.json())
         .then((res) => {
             setIsLoadingModalOpen(true);
-            checkResult(res);
+            navigate(`/result/${res}`);
         })
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
         });
-    };
-
-    const checkResult = (diaryId) => {
-        setIsLoadingModalOpen(true);
-        setTimeout(() => {
-            requestResult(diaryId);
-        }, 3000);
-    };
-
-    const requestResult = (diaryId) => {
-        setIsLoadingModalOpen(true);
-        let count = 0;
-        const interval = setInterval(() => {
-            if (count > 14) {
-                clearInterval(interval);
-                setIsLoadingModalOpen(false);
-                alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
-                navigate('/');
-            } else {
-                fetch(`${process.env.REACT_APP_API_URL}/api/feeling/${diaryId}`,
-                        {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + getCookie('accessToken'),
-                            },
-                        })
-                    .then(response => {
-                        if (response.status === 200) {
-                            clearInterval(interval);
-                            setIsLoadingModalOpen(false);
-                            navigate(`/result/${diaryId}`);
-                        } else {
-                            count++;
-                        }
-                    })
-                    .catch(error => {
-                        clearInterval(interval);
-                        setIsLoadingModalOpen(false);
-                        alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
-                        navigate('/');
-                    });
-            }
-        }, 500);
     };
 
     const handleRecordButton = () => {

@@ -3,25 +3,30 @@ import { getCookie } from '../utils/cookieManage';
 
 export function TimeSelect({handleTimeSelectChange, year, month}) {
     const [timeData, setTimeData] = useState([]);
+    
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/diary/all?userId=1`,
+        fetch(`${process.env.REACT_APP_API_URL}/api/diary/all`,
             {
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + getCookie("accessToken"),
               },
             })
-            .then((response) => response.json())
+            .then((response) => {
+              if (response.status === 200) {
+                return response.json();
+              }
+            })
             .then((data) => {
                 setTimeData(data);
             })
-            .catch((error) => console.log(error));
+            .catch((error)=> {console.log(error)});
     }, []);
 
     return (
         <div className="time-select">
           <select id="yearSelect" onChange={handleTimeSelectChange} value={year}>
-              {timeData.length > 0 ? (
+              {timeData && timeData.length > 0 ? (
                 (() => {
                     const end = parseInt(timeData[0].date.split('-')[0]);
                     const start = parseInt(timeData[timeData.length - 1].date.split('-')[0]);

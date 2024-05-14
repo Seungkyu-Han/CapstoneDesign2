@@ -20,7 +20,12 @@ function DetailDiary() {
                     'Authorization': 'Bearer ' + getCookie('accessToken'),
                 },
         })
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } 
+            
+        })
         .then((res) => {
             setDiaryData(res);
         })
@@ -43,9 +48,14 @@ function DetailDiary() {
                 'Authorization': 'Bearer ' + getCookie('accessToken'),
             },
         })
-        .then(() => {
-            alert('일기기 삭제되었습니다.');
-            navigate('/');
+        .then((res) => {
+            if (res.status === 200) {
+                alert('일기기 삭제되었습니다.');
+                navigate('/');
+            }
+            else {
+                throw new Error();
+            }
         })
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
@@ -85,12 +95,18 @@ function DetailDiary() {
                         date: todayDate,
                 })
             })
-            .then(() => {
-                const sentimentWrapper = document.querySelector('.sentiment-wrapper');
-                sentimentWrapper.remove();
-                const chattingWrapper = document.querySelector('.chatting-wrapper');
-                chattingWrapper.remove();
-                setIsLoadingModalOpen(true);
+            .then((res) => {
+                if (res.status === 200) {
+                    const sentimentWrapper = document.querySelector('.sentiment-wrapper');
+                    sentimentWrapper.remove();
+                    const chattingWrapper = document.querySelector('.chatting-wrapper');
+                    chattingWrapper.remove();
+                    setIsLoadingModalOpen(true);
+                    navigate(`/result/${id}`);
+                }
+                else {
+                    throw new Error();
+                }    
             })
             .catch(() => {
                 alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
