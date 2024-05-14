@@ -288,6 +288,8 @@ def naver_sentiment(request):
 
 
 
+conversation_history = {}
+
 @csrf_exempt
 def chatgpt_completion(request):
     client = OpenAI(api_key=API_KEY)
@@ -295,11 +297,22 @@ def chatgpt_completion(request):
         try:
             data = json.loads(request.body)
             content = data.get('content')
-            if not content:
-                return JsonResponse({'error': 'No content provided'}, status=400)
+            user_id = data.get('user_id')
+            signnum = data.get('signnum')
+            if not content or not user_id or signnum is None:
+                return JsonResponse({'error': 'Invalid request. User ID, content, or signnum missing.'}, status=400)
+            
+            # 1번(signnum)이 들어오면 해당 사용자의 대화 기록을 삭제합니다.
+            if signnum == 1:
+                if user_id in conversation_history:
+                    del conversation_history[user_id]
+                return JsonResponse({'message': 'User conversation history deleted.'}, status=200)
+            
+            # 사용자 ID에 해당하는 대화 기록을 가져옵니다.
+            user_history = conversation_history.get(user_id, [])
             
             chat_completion = client.chat.completions.create(
-                messages=[
+                messages=user_history + [
                     {
                         "role": "user",
                         "content": content,
@@ -309,6 +322,19 @@ def chatgpt_completion(request):
             )
 
             response = chat_completion.choices[0].message.content
+
+            user_history.append({
+                "role": "user",
+                "content": content,
+            })
+            user_history.append({
+                "role": "assistant",
+                "content": response,
+            })
+            
+            # 사용자 ID에 대한 대화 기록을 업데이트합니다.
+            conversation_history[user_id] = user_history
+
             return HttpResponse(response, content_type="text/plain")
             #return JsonResponse({'response': response}, status=200)
         
