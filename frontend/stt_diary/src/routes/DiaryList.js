@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './DiaryList.css';
 import { TimeSelect } from '../components/TimeSelect';
 import { Link } from 'react-router-dom';
+import { getCookie } from '../utils/cookieManage';
 
 function DiaryList() {
   const [data, setData] = useState([]);
@@ -11,17 +12,28 @@ function DiaryList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?userId=1&year=${year}&month=${month}`,
+    fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?&year=${year}&month=${month}`,
         {
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getCookie("accessToken"),
+          },
         })
-      .then((response) => response.json())
+      .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error();
+          }
+      })
       .then((data) => {
         setData(data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+      });
   }, [year,month]);
-
+  
   const handleTimeSelectChange = () => {
     setYear(parseInt(document.getElementById('yearSelect').value));
     setMonth(parseInt(document.getElementById('monthSelect').value));
@@ -36,7 +48,7 @@ function DiaryList() {
         <TimeSelect handleTimeSelectChange={handleTimeSelectChange} year={year} month={month}/>
         <button className="create-diary-btn" onClick={handleCreateDiaryClick}>일기 작성</button>
       </div>
-      {data.length > 0 ? (
+      {data && data.length > 0 ? (
         <div className="diary-list-main">{
             data.map((item, i) => {
               let dates = item.date.split('-');

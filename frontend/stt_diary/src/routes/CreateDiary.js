@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
 import LoadingModal from '../components/LoadingModal';
-
+import { getCookie } from '../utils/cookieManage';
 
 function CreateDiary() {
     const currentDate = new Date();
@@ -42,16 +42,20 @@ function CreateDiary() {
         fetch(`${process.env.REACT_APP_API_URL}/api/diary`,
             {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('accessToken'),
+                },
                 body: JSON.stringify({
-                    userId : 1,
                     title: title,
                     content: content,
                     date: date,
             })
         })
-        .then(() => {
+        .then(response => response.json())
+        .then((res) => {
             setIsLoadingModalOpen(true);
+            navigate(`/result/${res}`);
         })
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
