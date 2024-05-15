@@ -10,6 +10,7 @@ import knu.capstoneDesign.repository.ConsultingRepository
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserConsultingRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -20,6 +21,9 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.net.ConnectException
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 @Service
 class ChatGPTServiceAuthImpl(
@@ -29,9 +33,11 @@ class ChatGPTServiceAuthImpl(
     private val chatGPTConsult: String,
     private val diaryRepository: DiaryRepository,
     private val consultingRepository: ConsultingRepository,
-    private val userConsultingRepository: UserConsultingRepository
+    private val userConsultingRepository: UserConsultingRepository,
+    private val redisTemplate: RedisTemplate<String, String>
 ): ChatGPTService {
 
+    private val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     override fun get(content: String, authentication: Authentication): ResponseEntity<String> {
 
         val result = requestChat(content, userId = authentication.name.toLong(), 0)
@@ -76,6 +82,17 @@ class ChatGPTServiceAuthImpl(
             Consulting(id = null, diary = diary, content = consult)
         )
 
+        disconnectChatGPT(diaryId)
+
         return ResponseEntity(ChatGPTDiaryRes(consult), HttpStatus.OK)
+    }
+
+    private fun disconnectChatGPT(diaryId: Int){
+        redisTemplate.opsForValue().set(diaryId.toString(), "connect", 5, TimeUnit.SECONDS)
+        scheduler.schedule({
+            if(redisTemplate.opsForValue().get(diaryId.toString()) == null){
+                requestChat("연결 종료", diaryId.toLong(), 1)
+            }
+        }, 10, TimeUnit.SECONDS)
     }
 }
