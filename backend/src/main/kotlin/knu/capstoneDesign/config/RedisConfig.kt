@@ -13,9 +13,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 @Configuration
 @EnableRedisRepositories
 class RedisConfig(
-    @Value("\${redis.host}")
+    @Value("\${spring.data.redis.host}")
     private val host: String,
-    @Value("\${redis.port}")
+    @Value("\${spring.data.redis.port}")
     private val port: Int) {
 
     @Bean
