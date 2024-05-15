@@ -76,7 +76,7 @@ class ChatGPTServiceAuthImpl(
 
     override fun getDiary(diaryId: Int, userId: Long): ResponseEntity<ChatGPTDiaryRes> {
         val diary = diaryRepository.findById(diaryId).orElseThrow { NullPointerException() }
-        val consult = requestChat(diary.content + chatGPTConsult, userId, 0)
+        val consult = requestChat(diary.content + chatGPTConsult, diaryId.toLong(), 0)
 
         consultingRepository.save(
             Consulting(id = null, diary = diary, content = consult)
@@ -88,11 +88,11 @@ class ChatGPTServiceAuthImpl(
     }
 
     private fun disconnectChatGPT(diaryId: Int){
-        redisTemplate.opsForValue().set(diaryId.toString(), "connect", 5, TimeUnit.SECONDS)
+        redisTemplate.opsForValue().set(diaryId.toString(), "connect", 20, TimeUnit.MINUTES)
         scheduler.schedule({
             if(redisTemplate.opsForValue().get(diaryId.toString()) == null){
                 requestChat("연결 종료", diaryId.toLong(), 1)
             }
-        }, 10, TimeUnit.SECONDS)
+        }, 21, TimeUnit.MINUTES)
     }
 }
