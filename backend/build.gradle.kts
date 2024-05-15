@@ -67,6 +67,9 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.1")
+
+	//redis
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 }
 
 tasks.withType<KotlinCompile> {
