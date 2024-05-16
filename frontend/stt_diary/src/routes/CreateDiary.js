@@ -4,12 +4,21 @@ import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
 import LoadingModal from '../components/LoadingModal';
 import { getCookie } from '../utils/cookieManage';
+import { onRecAudio } from '../utils/record';
 
 function CreateDiary() {
     const currentDate = new Date();
     const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
     const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
     const navigate = useNavigate();
+
+    // Audio Record States
+    const [stream, setStream] = useState();
+    const [media, setMedia] = useState();
+    const [onRec, setOnRec] = useState(true);
+    const [source, setSource] = useState();
+    const [analyser, setAnalyser] = useState();
+    const [audioUrl, setAudioUrl] = useState();
 
     const getDayOfWeek = (currentDate) => { 
         const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -64,6 +73,7 @@ function CreateDiary() {
 
     const handleRecordButton = () => {
         setIsRecordModalOpen(true);
+        onRecAudio(source, setSource, setAnalyser, setStream, setMedia, setOnRec);
     };
 
     return (
@@ -79,7 +89,14 @@ function CreateDiary() {
                     </div>
                     <button className="save-button" onClick={handleSaveButton}>저장</button>
                 </div>
-                {isRecordModalOpen && <RecordModal setIsRecordModalOpen={setIsRecordModalOpen} />}
+                {isRecordModalOpen && <RecordModal setIsRecordModalOpen={setIsRecordModalOpen} 
+                    setAudioUrl={setAudioUrl} 
+                    setOnRec={setOnRec}
+                    analyser={analyser}
+                    source={source}
+                    media={media}
+                    stream={stream}
+                    audioUrl={audioUrl} />}
                 {isLoadingModalOpen && <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />}
             </div>
         </div>
