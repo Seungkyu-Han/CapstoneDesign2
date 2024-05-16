@@ -22,15 +22,6 @@ import org.springframework.web.bind.annotation.*
 @Tag(name="chatGPT")
 class ChatGPTController(private val chatGPTService: ChatGPTService) {
 
-    @GetMapping
-    @Operation(summary = "Just Chat with ChatGPT")
-    @ApiResponses(
-        ApiResponse(responseCode = "200", description = "성공", content= arrayOf(Content()))
-    )
-    fun get(@RequestParam content: String, @Parameter(hidden = true) authentication: Authentication): ResponseEntity<String>{
-        return chatGPTService.get(content, authentication)
-    }
-
     @GetMapping("/diary")
     @Operation(summary = "일기 분석 API")
     @ApiResponses(

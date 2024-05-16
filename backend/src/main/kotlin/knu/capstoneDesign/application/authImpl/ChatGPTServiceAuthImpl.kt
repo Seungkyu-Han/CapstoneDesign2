@@ -45,13 +45,6 @@ class ChatGPTServiceAuthImpl(
 ): ChatGPTService {
 
     private val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-    override fun get(content: String, authentication: Authentication): ResponseEntity<String> {
-
-        val result = requestChat(content, userId = authentication.name.toLong(), 0)
-
-
-        return ResponseEntity.ok(result)
-    }
 
     private fun requestChat(content: String, userId: Long, signnum: Int): String{
         val restTemplate = RestTemplate()
