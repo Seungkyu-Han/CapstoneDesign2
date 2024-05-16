@@ -12,16 +12,16 @@ import java.time.LocalDateTime
 data class UserConsulting(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private var id:Int,
+    var id:Int?,
 
     @ManyToOne
-    private var diary: Diary,
+    var diary: Diary,
 
-    private var localDateTime: LocalDateTime,
-
-    @Column(length = 1000)
-    private var question: String,
+    var localDateTime: LocalDateTime,
 
     @Column(length = 1000)
-    private var answer: String
+    var question: String,
+
+    @Column(length = 1000)
+    var answer: String
 )

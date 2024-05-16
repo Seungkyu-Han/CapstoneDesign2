@@ -2,10 +2,15 @@ package knu.capstoneDesign.application.authImpl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import knu.capstoneDesign.application.ChatGPTService
+import knu.capstoneDesign.data.dto.chatGPT.req.ChatGPTPostConsultingReq
 import knu.capstoneDesign.data.dto.chatGPT.req.ChatGPTReq
 import knu.capstoneDesign.data.dto.chatGPT.res.ChatGPTDiaryRes
+import knu.capstoneDesign.data.dto.chatGPT.res.ChatGPTGetConsultingRes
+import knu.capstoneDesign.data.dto.chatGPT.res.ChatGPTPostConsultingRes
 import knu.capstoneDesign.data.entity.Consulting
+import knu.capstoneDesign.data.entity.Diary
 import knu.capstoneDesign.data.entity.User
+import knu.capstoneDesign.data.entity.UserConsulting
 import knu.capstoneDesign.repository.ConsultingRepository
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserConsultingRepository
@@ -21,6 +26,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.net.ConnectException
 import java.nio.charset.StandardCharsets
+import java.time.LocalDateTime
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -94,5 +101,60 @@ class ChatGPTServiceAuthImpl(
                 requestChat("연결 종료", diaryId.toLong(), 1)
             }
         }, 21, TimeUnit.MINUTES)
+    }
+
+
+
+    override fun postConsult(chatGPTPostConsultingReq: ChatGPTPostConsultingReq, authentication: Authentication): ResponseEntity<ChatGPTPostConsultingRes> {
+        val gptCompletableFuture = CompletableFuture.supplyAsync {
+            requestChat(chatGPTPostConsultingReq.content, chatGPTPostConsultingReq.diaryId.toLong(), 0)
+        }
+
+        val diaryCompletableFuture = CompletableFuture.supplyAsync {
+            diaryRepository.findById(chatGPTPostConsultingReq.diaryId).orElseThrow{NullPointerException("asdf")}
+        }
+
+        return CompletableFuture.allOf(gptCompletableFuture, diaryCompletableFuture).thenApply {
+            val diary = diaryCompletableFuture.get()
+            val consult = gptCompletableFuture.get()
+
+            if(diary.user.id != authentication.name.toLong())
+                throw IllegalAccessException()
+
+            val userConsulting = UserConsulting(id = null, diary = diary, localDateTime = LocalDateTime.now(), question = chatGPTPostConsultingReq.content, answer = consult)
+            userConsultingRepository.save(userConsulting)
+
+            disconnectChatGPT(chatGPTPostConsultingReq.diaryId)
+
+            ResponseEntity(ChatGPTPostConsultingRes(userConsulting), HttpStatus.OK)
+        }.get()
+    }
+
+    override fun getConsult(diaryId: Int, authentication: Authentication): ResponseEntity<List<ChatGPTGetConsultingRes>> {
+        val diary = diaryRepository.findById(diaryId).orElseThrow { NullPointerException() }
+        if(diary.user.id != authentication.name.toLong())
+            throw IllegalAccessException()
+        return this.getConsult(diary)
+    }
+
+    override fun getConsult(diary: Diary): ResponseEntity<List<ChatGPTGetConsultingRes>> {
+        return ResponseEntity(userConsultingRepository.findByDiary(diary)
+            .map {
+                userConsulting ->
+                    ChatGPTGetConsultingRes(id = userConsulting.id ?: 0, localDateTime = userConsulting.localDateTime,
+                    question = userConsulting.question, answer = userConsulting.answer)
+            }, HttpStatus.OK)
+    }
+
+    override fun deleteConsult(userConsultingId: Int, authentication: Authentication): ResponseEntity<HttpStatus> {
+        val userConsulting = userConsultingRepository.findById(userConsultingId).orElseThrow { NullPointerException() }
+        if(userConsulting.diary.user.id != authentication.name.toLong())
+            throw IllegalAccessException()
+        return deleteConsult(userConsulting)
+    }
+
+    override fun deleteConsult(userConsulting: UserConsulting): ResponseEntity<HttpStatus> {
+        userConsultingRepository.delete(userConsulting)
+        return ResponseEntity(HttpStatus.OK)
     }
 }
