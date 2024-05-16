@@ -49,7 +49,7 @@ class ChatGPTTest(
 
     @AfterEach
     fun deleteTestUser(){
-//        userRepository.delete(testUser)
+        userRepository.delete(testUser)
     }
 
     /**
