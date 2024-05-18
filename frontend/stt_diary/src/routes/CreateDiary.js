@@ -84,6 +84,7 @@ function CreateDiary() {
             }
         })
         .then(data => {
+            setIsLoadingModalOpen(false);
             document.getElementsByClassName('diary-create-content')[0].innerHTML = data;
         })
         .catch(err => {
@@ -92,12 +93,12 @@ function CreateDiary() {
             } else {
                 alert('서버 오류입니다.');
             }
+            setIsLoadingModalOpen(false);
         });
     }
 
     useEffect(() => {
         if (audioUrl && recordingStopped) {
-            console.log("Effect triggered: submitting audio file");
             let audioFile = onSubmitAudioFile(audioUrl);
             let formData = new FormData();
             formData.append('file', audioFile);
@@ -118,7 +119,11 @@ function CreateDiary() {
                     </div>
                     <button className="save-button" onClick={handleSaveButton}>저장</button>
                 </div>
-                {isRecordModalOpen && <RecordModal setIsRecordModalOpen={setIsRecordModalOpen} offRecAudio={offRecAudio} onSubmitAudioFile={onSubmitAudioFile} />}
+                {isRecordModalOpen && <RecordModal 
+                    setIsRecordModalOpen={setIsRecordModalOpen} 
+                    offRecAudio={offRecAudio} 
+                    onSubmitAudioFile={onSubmitAudioFile} 
+                    setIsLoadingModalOpen={setIsLoadingModalOpen} />}
                 {isLoadingModalOpen && <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />}
             </div>
         </div>

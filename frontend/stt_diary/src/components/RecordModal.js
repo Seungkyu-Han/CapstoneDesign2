@@ -5,6 +5,7 @@ function RecordModal(props) {
 
     const closeModal = (e) => {
         props.setIsRecordModalOpen(false);
+        props.setIsLoadingModalOpen(true);
     };
 
 
