@@ -17,10 +17,10 @@ const onRecAudio = (source, setSource, setAnalyser, setStream, setMedia, setOnRe
 
   function makeSound(stream) {
     const source = audioCtx.createMediaStreamSource(stream);
-    setSource(source);
-
+    
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
+    setSource(source);
   };
 
   navigator.mediaDevices.getUserMedia({ audio: true })
