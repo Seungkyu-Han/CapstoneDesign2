@@ -103,7 +103,7 @@ function SentimentResult() {
                     {resultAnalysis}
                 </div>
                 {result === 'negative' && 
-                    <button className='consulting-btn'>상담하기</button>
+                    <button className='consulting-btn' onClick={()=>navigate(`/consulting/${id}`)}>상담하기</button>
                 }
             </div>
         </div>
