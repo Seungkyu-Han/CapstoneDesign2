@@ -8,52 +8,80 @@ function SentimentResult() {
   const { id } = useParams(); 
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);  
   const [result, setResult] = useState(null);
+  const [resultAnalysis, setResultAnalysis] = useState(null);
   const navigate = useNavigate();
 
-  const requestResult = (id) => {
+  const requestResult = (count = 0) => {
     setIsLoadingModalOpen(true);
-    let count = 0;
-    const interval = setInterval(() => {
-        if (count > 14) {
-            clearInterval(interval);
-            setIsLoadingModalOpen(false);
+    fetch(`${process.env.REACT_APP_API_URL}/api/feeling?diaryId=${id}`,
+    {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getCookie('accessToken'),
+        },
+    })
+    .then(response => {
+        if (response.status === 200) {
+            return response.text();
+        } else {
+            if(count < 14){
+                setTimeout(() => requestResult(count + 1), 500);
+            }
+            else{
+                setIsLoadingModalOpen(false);
+                alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                navigate('/');
+            }
+        }
+    })
+    .then((res) => {
+        setResult(res);
+    })
+    .catch(error => {
+        setIsLoadingModalOpen(false);
+        alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+        navigate('/');
+    });
+  };
+
+  const requestResultAnalysis = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/chatGPT/diary?diaryId=${id}`,
+    {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getCookie('accessToken'),
+        },
+    })
+    .then(response => {
+        if (response.status === 200) {
+            return response.json();
+        } else {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
             navigate('/');
-        } else {
-            fetch(`${process.env.REACT_APP_API_URL}/api/feeling?diaryId=${id}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + getCookie('accessToken'),
-                    },
-                })
-                .then(response => {
-                      if (response.status === 200) {
-                          return response.text();
-                      } else {
-                          count++;
-                      }
-                  })
-                .then((res) => {
-                    clearInterval(interval);
-                    setIsLoadingModalOpen(false);
-                    setResult(res);
-                })
-                .catch(error => {
-                    clearInterval(interval);
-                    setIsLoadingModalOpen(false);
-                    alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
-                    navigate('/');
-                });
         }
-    }, 500);
+    })
+    .then((res) => {
+        setResultAnalysis(res.content);
+    })
+    .catch(error => {
+        alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+        navigate('/');
+    });
   };
 
   useEffect(() => {
+    if(resultAnalysis && result){
+        setIsLoadingModalOpen(false);
+    }
+  }, [resultAnalysis, result]);
+
+  useEffect(() => {
     setIsLoadingModalOpen(true);
-      setTimeout(() => {
-          requestResult(id);
+    requestResultAnalysis();
+    setTimeout(() => {
+          requestResult();
     }, 3000);
   }, [id]);
 
@@ -71,8 +99,10 @@ function SentimentResult() {
                 이네요
             </h3>
             <div className='result-content'>
-                <p>... 감정분석 내용 ...... 감정분석 내용 ...... 감정분석 내용 ...... 감정분석 내용 ...... 감정분석 내용 ...... 감정분석 내용 ...... 감정분석 내용 ...감정분석 내용 ...... </p>
-                {result === 'neutral' && 
+                <div className='result-content-inner'>
+                    {resultAnalysis}
+                </div>
+                {result === 'negative' && 
                     <button className='consulting-btn'>상담하기</button>
                 }
             </div>
