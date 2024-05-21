@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './DetailDiary.css';
 import LoadingModal from '../components/LoadingModal';
+import { getCookie } from '../utils/cookieManage';
 
 function DetailDiary() {
     const { id } = useParams();
@@ -16,9 +17,15 @@ function DetailDiary() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('accessToken'),
                 },
         })
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } 
+            
+        })
         .then((res) => {
             setDiaryData(res);
         })
@@ -38,11 +45,17 @@ function DetailDiary() {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getCookie('accessToken'),
             },
         })
-        .then(() => {
-            alert('일기기 삭제되었습니다.');
-            navigate('/');
+        .then((res) => {
+            if (res.status === 200) {
+                alert('일기기 삭제되었습니다.');
+                navigate('/');
+            }
+            else {
+                throw new Error();
+            }
         })
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
@@ -73,6 +86,7 @@ function DetailDiary() {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + getCookie('accessToken'),
                     },
                     body: JSON.stringify({
                         id : id,
@@ -81,12 +95,18 @@ function DetailDiary() {
                         date: todayDate,
                 })
             })
-            .then(() => {
-                const sentimentWrapper = document.querySelector('.sentiment-wrapper');
-                sentimentWrapper.remove();
-                const chattingWrapper = document.querySelector('.chatting-wrapper');
-                chattingWrapper.remove();
-                setIsLoadingModalOpen(true);
+            .then((res) => {
+                if (res.status === 200) {
+                    const sentimentWrapper = document.querySelector('.sentiment-wrapper');
+                    sentimentWrapper.remove();
+                    const chattingWrapper = document.querySelector('.chatting-wrapper');
+                    chattingWrapper.remove();
+                    setIsLoadingModalOpen(true);
+                    navigate(`/result/${id}`);
+                }
+                else {
+                    throw new Error();
+                }    
             })
             .catch(() => {
                 alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
