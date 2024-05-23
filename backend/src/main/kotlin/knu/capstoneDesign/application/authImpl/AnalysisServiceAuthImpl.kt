@@ -21,7 +21,7 @@ class AnalysisServiceAuthImpl(
 ): AnalysisService, AnalysisServiceImpl(userRepository, diaryRepository, analysisRepository, aiServerUrl) {
     override fun get(diaryId: Int, authentication: Authentication): ResponseEntity<String> {
         val diary = diaryRepository.findById(diaryId).orElseThrow { NullPointerException() }
-        if(diary.user.id != authentication.name.toLong())
+        if(diary.user?.id != authentication.name.toLong())
             throw NullPointerException()
         return super.get(diary)
     }

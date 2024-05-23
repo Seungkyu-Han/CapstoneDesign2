@@ -67,7 +67,7 @@ class DiaryTest(
         //when
         val diary = diaryRepository.findByUserAndDate(user = testUser, date = testDay).orElseThrow { NullPointerException() }
 
-        assert(diary.user.id == testUser.id)
+        assert(diary.user?.id == testUser.id)
         assert(diary.date == testDay)
         assert(diary.title == testTitle)
         assert(diary.content == testContent)
@@ -130,7 +130,7 @@ class DiaryTest(
         val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today).orElseThrow{NullPointerException()}
         assert(newDiary.content == newContent)
         assert(newDiary.date == today)
-        assert(newDiary.user.id == testUser.id)
+        assert(newDiary.user?.id == testUser.id)
 
     }
 
@@ -152,7 +152,7 @@ class DiaryTest(
         val newDiary = diaryRepository.findByUserAndDate(user = testUser, date = today).orElseThrow{NullPointerException()}
         assert(newDiary.title == newTitle)
         assert(newDiary.date == today)
-        assert(newDiary.user.id == testUser.id)
+        assert(newDiary.user?.id == testUser.id)
 
     }
 
@@ -176,7 +176,7 @@ class DiaryTest(
         assert(newDiary.content == newContent)
         assert(newDiary.title == newTitle)
         assert(newDiary.date == today)
-        assert(newDiary.user.id == testUser.id)
+        assert(newDiary.user?.id == testUser.id)
 
     }
 

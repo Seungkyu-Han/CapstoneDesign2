@@ -15,9 +15,9 @@ data class Diary(
     var id:Int?,
 
     @ManyToOne
-    var user: User,
+    var user: User?,
 
-    var date: LocalDate,
+    var date: LocalDate?,
 
     @Column(length = 500)
     var title: String?,
@@ -30,4 +30,7 @@ data class Diary(
 
     constructor(user: User, title:String, content: String):
             this(id = null, user = user, date = LocalDate.now(), title = title, content = content)
+
+    constructor(diaryId: Int):
+            this(id = diaryId, user = null, date = null, title = null, content = null)
 }
