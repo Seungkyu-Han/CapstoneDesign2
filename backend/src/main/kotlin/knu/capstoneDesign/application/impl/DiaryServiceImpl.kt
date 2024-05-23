@@ -12,17 +12,14 @@ import knu.capstoneDesign.data.enum.Emotion
 import knu.capstoneDesign.repository.AnalysisRepository
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.*
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 import java.net.ConnectException
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.concurrent.CompletableFuture
 
 open class DiaryServiceImpl(
     private val userRepository: UserRepository,
@@ -46,17 +43,10 @@ open class DiaryServiceImpl(
 
         diaryRepository.save(diary)
 
-        kotlinx.coroutines.GlobalScope.launch {
-            val analysisResult = requestAnalysis(diaryPostReq.content ?: "")
-            withContext(Dispatchers.IO) {
-                try{
-                    analysisRepository.save(
-                        Analysis(id = null, diary = diary,
-                            emotion = Emotion.valueOf(analysisResult), "")
-                    )
-                }catch(_: DataIntegrityViolationException){}
-            }
-
+        CompletableFuture.runAsync {
+            val analysis = requestAnalysis(diaryPostReq.content ?: "")
+            analysisRepository.save(Analysis(id = null, diary = diary,
+                emotion = Emotion.valueOf(analysis), "임시"))
         }
 
         return ResponseEntity.ok(diary.id)
@@ -66,7 +56,7 @@ open class DiaryServiceImpl(
 
         val diary = diaryRepository.findById(id).orElseThrow{NullPointerException()}
 
-        return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date, title = diary.title ?: "", content = diary.content ?: ""))
+        return ResponseEntity.ok(DiaryGetRes(id = diary.id ?: 0, date = diary.date ?: LocalDate.now(), title = diary.title ?: "", content = diary.content ?: ""))
     }
 
     override fun patch(diaryPatchReq: DiaryPatchReq): ResponseEntity<HttpStatusCode> {

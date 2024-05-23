@@ -8,6 +8,7 @@ import knu.capstoneDesign.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.YearMonth
 
 @Service
@@ -30,7 +31,7 @@ class AnalysisServiceImpl(
 
         return ResponseEntity.ok(analysisRepository.findByUserIdAndDateBetween(userId, startDate, endDate)
             .map {analysis ->  AnalysisGetMonthRes(
-                id = analysis.id, diaryId = analysis.diary.id, date = analysis.diary.date, emotion = analysis.emotion)})
+                id = analysis.id, diaryId = analysis.diary.id, date = analysis.diary.date ?: LocalDate.now(), emotion = analysis.emotion)})
     }
 
 }

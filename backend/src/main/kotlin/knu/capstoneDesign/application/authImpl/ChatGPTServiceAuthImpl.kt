@@ -16,11 +16,7 @@ import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserConsultingRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
@@ -74,17 +70,53 @@ class ChatGPTServiceAuthImpl(
         return getDiary(diaryId, authentication.name.toLong())
     }
 
+//    override fun getDiary(diaryId: Int, userId: Long): ResponseEntity<ChatGPTDiaryRes> {
+//        val consulting = consultingRepository.findByDiary(Diary(diaryId))
+//        if(consulting.isPresent){
+//            return ResponseEntity(ChatGPTDiaryRes(consulting.get().content), HttpStatus.OK)
+//        }
+//        val diary = diaryRepository.findById(diaryId).orElseThrow { NullPointerException() }
+//        val consultingFromGPT = requestChat(diary.content ?: "", diaryId.toLong(), 0)
+//        consultingRepository.save(
+//            Consulting(id = null, diary = Diary(diaryId), content = consultingFromGPT)
+//        )
+//        disconnectChatGPT(diaryId)
+//
+//        return ResponseEntity(ChatGPTDiaryRes(consultingFromGPT), HttpStatus.OK)
+//    }
+
     override fun getDiary(diaryId: Int, userId: Long): ResponseEntity<ChatGPTDiaryRes> {
-        val diary = diaryRepository.findById(diaryId).orElseThrow { NullPointerException() }
-        val consult = requestChat(diary.content + chatGPTConsult, diaryId.toLong(), 0)
 
-        consultingRepository.save(
-            Consulting(id = null, diary = diary, content = consult)
-        )
+        val consultFromDatabaseRequest = CompletableFuture.supplyAsync{
+            consultingRepository.findByDiary(Diary(diaryId))
+        }.thenApply {
+                consult ->
+            if(consult.isEmpty){
+                null
+            }else{
+                consult.get().content
+            }
+        }
 
-        disconnectChatGPT(diaryId)
+        val consultFromGptRequest = CompletableFuture.supplyAsync{
+            diaryRepository.findById(diaryId).orElseThrow{NullPointerException()}.content
+        }.thenApply {
+                diaryContent ->
+            requestChat(diaryContent ?: "", diaryId.toLong(), 0)
+        }
 
-        return ResponseEntity(ChatGPTDiaryRes(consult), HttpStatus.OK)
+        return if(consultFromDatabaseRequest.get() != null){
+            disconnectChatGPT(diaryId)
+            ResponseEntity(ChatGPTDiaryRes(consultFromDatabaseRequest.get() ?: ""), HttpStatus.OK)
+        } else{
+            val consultFromGpt = consultFromGptRequest.get()
+            consultingRepository.save(
+                Consulting(id = null, diary = Diary(diaryId), content = consultFromGpt)
+            )
+            disconnectChatGPT(diaryId)
+
+            ResponseEntity(ChatGPTDiaryRes(consultFromGpt), HttpStatus.OK)
+        }
     }
 
     private fun disconnectChatGPT(diaryId: Int){
@@ -111,7 +143,7 @@ class ChatGPTServiceAuthImpl(
             val diary = diaryCompletableFuture.get()
             val consult = gptCompletableFuture.get()
 
-            if(diary.user.id != authentication.name.toLong())
+            if(diary.user?.id != authentication.name.toLong())
                 throw IllegalAccessException()
 
             val userConsulting = UserConsulting(id = null, diary = diary, localDateTime = LocalDateTime.now(), question = chatGPTPostConsultingReq.content, answer = consult)
@@ -125,7 +157,7 @@ class ChatGPTServiceAuthImpl(
 
     override fun getConsult(diaryId: Int, authentication: Authentication): ResponseEntity<List<ChatGPTGetConsultingRes>> {
         val diary = diaryRepository.findById(diaryId).orElseThrow { NullPointerException() }
-        if(diary.user.id != authentication.name.toLong())
+        if(diary.user?.id != authentication.name.toLong())
             throw IllegalAccessException()
         return this.getConsult(diary)
     }
@@ -141,7 +173,7 @@ class ChatGPTServiceAuthImpl(
 
     override fun deleteConsult(userConsultingId: Int, authentication: Authentication): ResponseEntity<HttpStatus> {
         val userConsulting = userConsultingRepository.findById(userConsultingId).orElseThrow { NullPointerException() }
-        if(userConsulting.diary.user.id != authentication.name.toLong())
+        if(userConsulting.diary.user?.id != authentication.name.toLong())
             throw IllegalAccessException()
         return deleteConsult(userConsulting)
     }
