@@ -54,6 +54,14 @@ function Consulting() {
     });
   }, []);
   
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      alert('상담이 종료됐습니다.');
+      navigate('/');
+    }, 1 * 60 * 1000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
   const sendMessage = (content) => {
     setIsLoading(true);
     let messageCopy = [...message];
@@ -104,7 +112,7 @@ function Consulting() {
                 <div className='chat bot'>
                   <img className='bot-profile' src={require('../assets/chat-profile.png')} alt='bot-profile' />
                   <div className='message'>
-                    안녕하세요! 심리상담 챗봇입니다. <br/>
+                    안녕하세요! 심리상담 챗봇입니다. 상담은 20분 뒤 자동 종료됩니다. <br/>
                     어떤 문제로 도와드릴까요?
                   </div>
                 </div>
