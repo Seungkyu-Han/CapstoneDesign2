@@ -1,6 +1,8 @@
 package knu.capstoneDesign.application.impl
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import knu.capstoneDesign.application.DiaryService
+import knu.capstoneDesign.data.dto.chatGPT.req.ChatGPTReq
 import knu.capstoneDesign.data.dto.diary.req.DiaryPatchReq
 import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
@@ -17,6 +19,7 @@ import org.springframework.http.*
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 import java.net.ConnectException
+import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.concurrent.CompletableFuture
@@ -25,6 +28,8 @@ open class DiaryServiceImpl(
     private val userRepository: UserRepository,
     private val diaryRepository: DiaryRepository,
     private val analysisRepository: AnalysisRepository,
+    @Value("\${chatGPT.analysis}")
+    private val chatGPTAnalysis: String,
     @Value("\${ai.server}")
     private val aiServerUrl: String):DiaryService {
 
@@ -40,13 +45,19 @@ open class DiaryServiceImpl(
             content = diaryPostReq.content
         )
 
-
         diaryRepository.save(diary)
 
-        CompletableFuture.runAsync {
-            val analysis = requestAnalysis(diaryPostReq.content ?: "")
-            analysisRepository.save(Analysis(id = null, diary = diary,
-                emotion = Emotion.valueOf(analysis), "임시"))
+        val analysisFromChatGPTRequest = CompletableFuture.supplyAsync{
+            requestAnalysisToChatGPT(diaryPostReq.content + chatGPTAnalysis, diaryPostReq.userId, 0)
+        }
+
+        CompletableFuture.supplyAsync{
+            requestAnalysis(diaryPostReq.content ?: "")
+        }.thenApply {
+            analysis ->
+                analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
+        }.thenRunAsync {
+            requestAnalysisToChatGPT("연결 종료", diaryPostReq.userId, 1)
         }
 
         return ResponseEntity.ok(diary.id)
@@ -118,5 +129,27 @@ open class DiaryServiceImpl(
 
     private fun getEmptyUserById(id: Long): User{
         return User(id = id, name = null, refreshToken = null)
+    }
+
+    private fun requestAnalysisToChatGPT(content: String, userId: Long, signnum: Int): String{
+        val restTemplate = RestTemplate()
+
+        val httpHeaders = HttpHeaders()
+        httpHeaders.contentType = MediaType.APPLICATION_JSON
+
+        val request = ChatGPTReq(content, userId, signnum)
+
+        val objectMapper = ObjectMapper()
+        val jsonRequest = objectMapper.writeValueAsString(request)
+
+        val requestEntity = HttpEntity(jsonRequest, httpHeaders)
+
+        val responseEntity = restTemplate.postForEntity(
+            "$aiServerUrl/chatcomp", requestEntity, String::class.java
+        )
+
+        return responseEntity.body?.let {
+            String(it.toByteArray(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)
+        } ?: throw ConnectException()
     }
 }

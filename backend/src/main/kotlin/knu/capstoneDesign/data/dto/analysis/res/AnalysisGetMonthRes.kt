@@ -7,5 +7,6 @@ data class AnalysisGetMonthRes(
     val id: Long?,
     val diaryId: Int?,
     val date: LocalDate,
-    val emotion: Emotion
+    val emotion: Emotion,
+    val summary: String
 )
