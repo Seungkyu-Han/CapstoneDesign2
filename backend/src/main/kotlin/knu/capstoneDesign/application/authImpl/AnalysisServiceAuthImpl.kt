@@ -3,6 +3,7 @@ package knu.capstoneDesign.application.authImpl
 import knu.capstoneDesign.application.AnalysisService
 import knu.capstoneDesign.application.impl.AnalysisServiceImpl
 import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetMonthRes
+import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetRes
 import knu.capstoneDesign.repository.AnalysisRepository
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
@@ -19,7 +20,7 @@ class AnalysisServiceAuthImpl(
     @Value("\${ai.server}")
     private val aiServerUrl: String
 ): AnalysisService, AnalysisServiceImpl(userRepository, diaryRepository, analysisRepository, aiServerUrl) {
-    override fun get(diaryId: Int, authentication: Authentication): ResponseEntity<String> {
+    override fun get(diaryId: Int, authentication: Authentication): ResponseEntity<AnalysisGetRes> {
         val diary = diaryRepository.findById(diaryId).orElseThrow { NullPointerException() }
         if(diary.user?.id != authentication.name.toLong())
             throw NullPointerException()

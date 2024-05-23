@@ -102,7 +102,7 @@ class ChatGPTServiceAuthImpl(
             diaryRepository.findById(diaryId).orElseThrow{NullPointerException()}.content
         }.thenApply {
                 diaryContent ->
-            requestChat(diaryContent ?: "", diaryId.toLong(), 0)
+            requestChat((diaryContent ?: "") + chatGPTConsult, diaryId.toLong(), 0)
         }
 
         return if(consultFromDatabaseRequest.get() != null){

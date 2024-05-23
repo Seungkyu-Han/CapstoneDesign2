@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import knu.capstoneDesign.application.AnalysisService
 import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetMonthRes
+import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetRes
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -28,7 +29,7 @@ class AnalysisController(
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content()))
     )
-    fun get(@RequestParam diaryId: Int, @Parameter(hidden = true) authentication: Authentication): ResponseEntity<String>{
+    fun get(@RequestParam diaryId: Int, @Parameter(hidden = true) authentication: Authentication): ResponseEntity<AnalysisGetRes>{
         return analysisService.get(diaryId, authentication)
     }
 

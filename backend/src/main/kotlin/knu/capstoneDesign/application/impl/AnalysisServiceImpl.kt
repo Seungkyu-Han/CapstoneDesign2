@@ -1,6 +1,7 @@
 package knu.capstoneDesign.application.impl
 
 import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetMonthRes
+import knu.capstoneDesign.data.dto.analysis.res.AnalysisGetRes
 import knu.capstoneDesign.data.entity.Diary
 import knu.capstoneDesign.repository.AnalysisRepository
 import knu.capstoneDesign.repository.DiaryRepository
@@ -20,9 +21,9 @@ class AnalysisServiceImpl(
     private val aiServerUrl: String
 ) {
 
-    fun get(diary: Diary): ResponseEntity<String>{
+    fun get(diary: Diary): ResponseEntity<AnalysisGetRes>{
         val analysis = analysisRepository.findByDiary(diary).orElseThrow{NullPointerException()}
-        return ResponseEntity.ok(analysis.emotion.name)
+        return ResponseEntity.ok(AnalysisGetRes(analysis))
     }
 
     fun getMonth(year: Int, month: Int, userId: Long): ResponseEntity<List<AnalysisGetMonthRes>>{
@@ -31,7 +32,7 @@ class AnalysisServiceImpl(
 
         return ResponseEntity.ok(analysisRepository.findByUserIdAndDateBetween(userId, startDate, endDate)
             .map {analysis ->  AnalysisGetMonthRes(
-                id = analysis.id, diaryId = analysis.diary.id, date = analysis.diary.date ?: LocalDate.now(), emotion = analysis.emotion)})
+                id = analysis.id, diaryId = analysis.diary.id, date = analysis.diary.date ?: LocalDate.now(), emotion = analysis.emotion, summary = analysis.summary)})
     }
 
 }
