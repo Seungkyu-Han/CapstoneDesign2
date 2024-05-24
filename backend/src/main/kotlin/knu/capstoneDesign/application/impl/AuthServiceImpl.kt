@@ -21,6 +21,8 @@ class AuthServiceImpl(
     private val clientId: String,
     @Value("\${kakao.auth.redirect_uri}")
     private val redirectUri: String,
+    @Value("\${kakao.auth.local_redirect_uri}")
+    private val localRedirectUri: String,
     private val userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider
 ): AuthService {
@@ -30,7 +32,7 @@ class AuthServiceImpl(
 
     override fun getLogin(code: String): ResponseEntity<AuthLoginRes> {
 
-        val kakaoAccessToken = getKakaoAccessToken(code) ?: throw NullPointerException()
+        val kakaoAccessToken = getKakaoAccessToken(code, redirectUri) ?: throw NullPointerException()
 
         val authKakaoInfoRes = getIdByKakao(kakaoAccessToken) ?: throw NullPointerException()
 
@@ -60,6 +62,27 @@ class AuthServiceImpl(
         return ResponseEntity.ok(AuthLoginRes(refreshToken = token, accessToken = accessToken))
     }
 
+    override fun getLocalLogin(code: String): ResponseEntity<AuthLoginRes> {
+
+        val kakaoAccessToken = getKakaoAccessToken(code, localRedirectUri) ?: throw NullPointerException()
+
+        val authKakaoInfoRes = getIdByKakao(kakaoAccessToken) ?: throw NullPointerException()
+
+        val optionalUser = userRepository.findById(authKakaoInfoRes.id)
+
+        if (optionalUser.isEmpty)
+            return register(authKakaoInfoRes)
+
+        val accessToken = jwtTokenProvider.createAccessToken(authKakaoInfoRes.id)
+        val refreshToken = jwtTokenProvider.createRefreshToken(authKakaoInfoRes.id)
+
+        val user = optionalUser.get()
+        user.refreshToken = refreshToken
+        userRepository.save(user)
+
+        return ResponseEntity.ok(AuthLoginRes(refreshToken = refreshToken, accessToken = accessToken))
+    }
+
     private fun register(authKakaoInfoRes: AuthKakaoInfoRes): ResponseEntity<AuthLoginRes>{
 
         val accessToken = jwtTokenProvider.createAccessToken(authKakaoInfoRes.id)
@@ -87,7 +110,7 @@ class AuthServiceImpl(
 
 
 
-    private fun getKakaoAccessToken(code: String):String?{
+    private fun getKakaoAccessToken(code: String, redirectUri: String):String?{
 
         val restTemplate = RestTemplate()
 

@@ -7,4 +7,5 @@ interface AuthService {
 
     fun getLogin(code: String): ResponseEntity<AuthLoginRes>
     fun patchLogin(refreshToken: String): ResponseEntity<AuthLoginRes>
+    fun getLocalLogin(code: String): ResponseEntity<AuthLoginRes>
 }

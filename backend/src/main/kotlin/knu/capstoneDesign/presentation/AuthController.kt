@@ -30,6 +30,18 @@ class AuthController(private val authService: AuthService) {
         return authService.getLogin(code)
     }
 
+    @GetMapping("/local-login")
+    @Operation(summary = "로컬 테스트 로그인 API", description = "회원이 아니면 회원가입을 진행합니다.")
+    @Parameters(
+        Parameter(name = "code", description = "카카오 로그인 code")
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "성공", content = arrayOf(Content(schema = Schema(implementation = AuthLoginRes::class))))
+    )
+    fun getLocalLogin(@RequestParam code: String): ResponseEntity<AuthLoginRes> {
+        return authService.getLocalLogin(code)
+    }
+
     @PatchMapping("/login")
     @Operation(summary = "AccessToken 갱신 API", description = "RefreshToken 사용해서 AccessToken 갱신")
     @ApiResponses(
