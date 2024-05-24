@@ -21,9 +21,11 @@ class DiaryServiceAuthImpl(
     private val userRepository: UserRepository,
     private val diaryRepository: DiaryRepository,
     private val analysisRepository: AnalysisRepository,
+    @Value("\${chatGPT.analysis}")
+    private val chatGPTAnalysis: String,
     @Value("\${ai.server}")
     private val aiServerUrl: String
-): DiaryServiceImpl(userRepository, diaryRepository, analysisRepository, aiServerUrl) {
+): DiaryServiceImpl(userRepository, diaryRepository, analysisRepository, chatGPTAnalysis, aiServerUrl) {
 
     fun post(diaryPostReq: DiaryPostReq, authentication: Authentication): ResponseEntity<Int> {
         val userId = authentication.name.toLong()

@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @SpringBootTest
@@ -57,9 +56,9 @@ class ChatGPTTest(
      * chatGPT consulting Test
      */
     @Test
-    @Transactional
     fun testChatGPTConsult(){
         //given
+        val startTime = System.currentTimeMillis()
         val diary = Diary(testUser, today, "제목", "오늘은 배가 살짝쿵 아팠다.")
         diaryRepository.save(diary)
 
@@ -73,6 +72,38 @@ class ChatGPTTest(
 
         //after
         diaryRepository.delete(diary)
+        println()
+        println()
+        println("동기코드 상담 생성의 소요시간: ${System.currentTimeMillis() - startTime}ms")
+        println()
+        println()
+    }
+
+    @Test
+    fun testDuplicateChatGPTConsult(){
+        //given
+        val startTime = System.currentTimeMillis()
+        val diary = Diary(testUser, today, "제목", "오늘은 배가 살짝쿵 아팠다.")
+        diaryRepository.save(diary)
+
+        //when
+        val consult1 = chatGPTService.getDiary(diary.id ?: 0, testUser.id).body?.content ?: throw NullPointerException()
+        val consult2 = chatGPTService.getDiary(diary.id ?: 0, testUser.id).body?.content ?: throw NullPointerException()
+
+        //then
+        assert(consult1.isNotEmpty())
+        val consulting:Consulting = consultingRepository.findByDiary(diary).orElseThrow { NullPointerException() }
+        assert(consulting.content == consult1)
+        assert(consult2.isNotEmpty())
+        assert(consulting.content == consult2)
+
+        //after
+        diaryRepository.delete(diary)
+        println()
+        println()
+        println("동기코드 상담 생성 후 조회의 소요시간: ${System.currentTimeMillis() - startTime}ms")
+        println()
+        println()
     }
 
     //postConsult
@@ -81,7 +112,7 @@ class ChatGPTTest(
         //given
         val diary = Diary(testUser, today, "오늘의 일기", "오늘은 너무 피곤한 하루였다.")
         diaryRepository.save(diary)
-        chatGPTService.getDiary(diaryId = diary.id?:0, userId = diary.user.id)
+        chatGPTService.getDiary(diaryId = diary.id?:0, userId = diary.user?.id ?: 0)
         val question = "어떻게 해야할까?"
 
         //when
@@ -90,7 +121,6 @@ class ChatGPTTest(
 
         //then
         val consult = userConsultingRepository.findById(consultResponse.id).orElseThrow{NullPointerException()}
-        println(consultResponse.answer)
         assert(consultResponse.answer.isNotEmpty())
         assert(consultResponse.question == question)
         assert(consultResponse.answer == consult.answer)
@@ -118,7 +148,6 @@ class ChatGPTTest(
         chatGPTGetConsultingResList.map {
             consultResponse ->
             val consult = userConsultingRepository.findById(consultResponse.id).orElseThrow { NullPointerException() }
-            println(consultResponse.answer)
             assert(consultResponse.answer.isNotEmpty())
             assert(consultResponse.question == question[questionIndex++])
             assert(consultResponse.answer == consult.answer)
@@ -134,7 +163,7 @@ class ChatGPTTest(
         //given
         val diary = Diary(testUser, today, "오늘의 일기", "오늘은 너무 피곤한 하루였다.")
         diaryRepository.save(diary)
-        chatGPTService.getDiary(diaryId = diary.id?:0, userId = diary.user.id)
+        chatGPTService.getDiary(diaryId = diary.id?:0, userId = diary.user?.id ?: 0)
         val question = "어떻게 해야할까?"
         val chatGPTPostConsultingReq = ChatGPTPostConsultingReq(diary.id ?: 0, question)
         val consultResponse = chatGPTService.postConsult(chatGPTPostConsultingReq, authentication).body ?: throw NullPointerException()
