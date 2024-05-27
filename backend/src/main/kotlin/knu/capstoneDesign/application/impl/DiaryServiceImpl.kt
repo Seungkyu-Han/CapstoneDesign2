@@ -79,6 +79,21 @@ open class DiaryServiceImpl(
 
         diaryRepository.save(diary)
 
+        val userId = diary.user?.id ?: 0
+
+        val analysisFromChatGPTRequest = CompletableFuture.supplyAsync{
+            requestAnalysisToChatGPT(diaryPatchReq.content + chatGPTAnalysis, userId, 0)
+        }
+
+        CompletableFuture.supplyAsync{
+            requestAnalysis(diaryPatchReq.content ?: "")
+        }.thenApply {
+                analysis ->
+            analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
+        }.thenRunAsync {
+            requestAnalysisToChatGPT("연결 종료", userId, 1)
+        }
+
         return ResponseEntity.ok().build()
     }
 
