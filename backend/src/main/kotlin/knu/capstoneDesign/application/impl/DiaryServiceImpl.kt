@@ -89,6 +89,7 @@ open class DiaryServiceImpl(
         }
 
         CompletableFuture.supplyAsync{
+            analysisRepository.deleteByDiary(diary)
             requestAnalysis(diaryContent ?: "")
         }.thenApply {
                 analysis ->
