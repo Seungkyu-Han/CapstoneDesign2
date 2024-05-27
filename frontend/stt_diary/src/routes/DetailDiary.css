@@ -102,12 +102,23 @@
     box-shadow: 0 0 2px 2px #ccc;
     margin-top: 80px;
     padding: 5% 10%;
-    background: linear-gradient(to bottom, rgba(248, 138, 159, 0.5) 50%, #EBF9EC 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.sentiment-header{
+.sentiment-wrapper.positive {
+    background: linear-gradient(to bottom, rgba(248, 138, 159, 0.5) 50%, #EBF9EC 100%);
+}
+
+.sentiment-wrapper.negative {
+    background: linear-gradient(to bottom, #AEF3DA 0%, rgba(113, 178, 229, 0.8) 50%, #2247A5 100%, #DAFDDE 100%);
+}
+
+.sentiment-wrapper.neutral {
+    background: linear-gradient(to bottom, #F3E884 0%, #AEED9A 100%);
+}
+
+.sentiment-title {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,6 +147,11 @@
     margin-top: 30px;
     padding: 30px 4vw;
     line-height: 1.5;
+    overflow-y: scroll;
+}
+    
+.sentiment-content::-webkit-scrollbar {
+    display: none;
 }
 
 /*chatting-wrapper*/
@@ -156,7 +172,7 @@
     background-color: #FFE9EE;
     border-radius: 0 20px 20px 20px;
     color: #001832;
-    max-width: 60%;
+    max-width: 70%;
     width: fit-content;
     word-wrap: break-word;
     text-align: left;
@@ -169,7 +185,7 @@
     background-color: rgba(203, 223, 251, 0.5);
     border-radius: 20px 20px 0 20px;
     color: #001832;
-    max-width: 60%;
+    max-width: 70%;
     width: fit-content;
     word-wrap: break-word;
     text-align: left;
