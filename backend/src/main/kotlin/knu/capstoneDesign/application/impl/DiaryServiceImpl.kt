@@ -45,14 +45,16 @@ open class DiaryServiceImpl(
             content = diaryPostReq.content
         )
 
+        val diaryContent = diaryPostReq.content?.replace("\n", "\\n")
+
         diaryRepository.save(diary)
 
         val analysisFromChatGPTRequest = CompletableFuture.supplyAsync{
-            requestAnalysisToChatGPT(diaryPostReq.content + chatGPTAnalysis, diaryPostReq.userId, 0)
+            requestAnalysisToChatGPT(diaryContent + chatGPTAnalysis, diaryPostReq.userId, 0)
         }
 
         CompletableFuture.supplyAsync{
-            requestAnalysis(diaryPostReq.content ?: "")
+            requestAnalysis(diaryContent ?: "")
         }.thenApply {
             analysis ->
                 analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
@@ -79,14 +81,15 @@ open class DiaryServiceImpl(
 
         diaryRepository.save(diary)
 
+        val diaryContent = diaryPatchReq.content?.replace("\n", "\\n")
         val userId = diary.user?.id ?: 0
 
         val analysisFromChatGPTRequest = CompletableFuture.supplyAsync{
-            requestAnalysisToChatGPT(diaryPatchReq.content + chatGPTAnalysis, userId, 0)
+            requestAnalysisToChatGPT(diaryContent + chatGPTAnalysis, userId, 0)
         }
 
         CompletableFuture.supplyAsync{
-            requestAnalysis(diaryPatchReq.content ?: "")
+            requestAnalysis(diaryContent ?: "")
         }.thenApply {
                 analysis ->
             analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
@@ -128,6 +131,7 @@ open class DiaryServiceImpl(
     }
 
     private fun requestAnalysis(content: String): String{
+        println(content)
         val restTemplate = RestTemplate()
 
         val httpHeaders = HttpHeaders()
@@ -139,6 +143,8 @@ open class DiaryServiceImpl(
 
         val responseEntity = restTemplate.postForEntity(
             "$aiServerUrl/sentiment", requestEntity, String::class.java)
+
+        println(responseEntity)
         return responseEntity.body ?: throw ConnectException()
     }
 
