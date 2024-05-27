@@ -73,7 +73,7 @@ function App() {
         <Route path='/' element={<DiaryList />}/>
         <Route path='/analysis' element={<SentimentReport/>}/>
         <Route path='/create-diary' element={<CreateDiary/>}/>
-        <Route path='/consulting' element={<Consulting/>} />
+        <Route path='/consulting/:id' element={<Consulting/>} />
         <Route path='/detail-diary/:id' element={<DetailDiary/>}/>
         <Route path='/result/:id' element={<SentimentResult/>}/>
         <Route path='/login' element={<Login/>}/>
