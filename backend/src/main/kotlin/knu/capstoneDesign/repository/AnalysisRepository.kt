@@ -4,11 +4,13 @@ import knu.capstoneDesign.data.entity.Analysis
 import knu.capstoneDesign.data.entity.Diary
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.util.*
 
 interface AnalysisRepository: JpaRepository<Analysis, Long> {
 
+    @Transactional
     fun deleteByDiary(diary: Diary)
     fun findByDiary(diary: Diary): Optional<Analysis>
 

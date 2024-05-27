@@ -85,13 +85,15 @@ open class DiaryServiceImpl(
         val userId = diary.user?.id ?: 0
 
         val analysisFromChatGPTRequest = CompletableFuture.supplyAsync{
+            println("REQUEST ANALYSIS TO CHATGPT")
             requestAnalysisToChatGPT(diaryContent + chatGPTAnalysis, userId, 0)
         }
 
-        CompletableFuture.supplyAsync{
-            analysisRepository.deleteByDiary(diary)
-            requestAnalysis(diaryContent ?: "")
-        }.thenApply {
+
+        CompletableFuture
+            .runAsync { analysisRepository.deleteByDiary(diary) }
+            .thenApplyAsync{ requestAnalysis(diaryContent ?: "") }
+            .thenApply {
                 analysis ->
             analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
         }.thenRunAsync {
@@ -154,6 +156,7 @@ open class DiaryServiceImpl(
     }
 
     private fun requestAnalysisToChatGPT(content: String, userId: Long, signnum: Int): String{
+        println("REQUEST ANALYSIS CONTENT: $content")
         val restTemplate = RestTemplate()
 
         val httpHeaders = HttpHeaders()
