@@ -12,7 +12,8 @@ function DiaryList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?&year=${year}&month=${month}`,
+    if(getCookie("accessToken")){
+      fetch(`${process.env.REACT_APP_API_URL}/api/diary/month?&year=${year}&month=${month}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -30,8 +31,12 @@ function DiaryList() {
         setData(data);
       })
       .catch((error) => {
-        console.error('Error:', error);
+         alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
       });
+    }
+    else{
+      navigate('/login');
+    }
   }, [year,month]);
   
   const handleTimeSelectChange = () => {
