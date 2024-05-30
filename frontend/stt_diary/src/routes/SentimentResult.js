@@ -5,8 +5,9 @@ import LoadingModal from '../components/LoadingModal';
 import './SentimentResult.css';
 
 function SentimentResult() {
-  const { id } = useParams(); 
+  const { option, id } = useParams();
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);  
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [result, setResult] = useState(null);
   const [resultAnalysis, setResultAnalysis] = useState(null);
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function SentimentResult() {
     })
     .then(response => {
         if (response.status === 200) {
-            return response.text();
+            return response.json();
         } else {
             if(count < 14){
                 setTimeout(() => requestResult(count + 1), 500);
@@ -36,7 +37,7 @@ function SentimentResult() {
         }
     })
     .then((res) => {
-        setResult(res);
+        setResult(res.emotion);
     })
     .catch(error => {
         setIsLoadingModalOpen(false);
@@ -78,6 +79,12 @@ function SentimentResult() {
   }, [resultAnalysis, result]);
 
   useEffect(() => {
+    if (option === 'create') {
+        setLoadingMessage('오늘 일기로 감정 분석 중입니다 ...');
+    }
+    else if (option === 'modify') {
+        setLoadingMessage('수정된 일기로 감정 분석 중입니다 ...');
+    }
     setIsLoadingModalOpen(true);
     requestResultAnalysis();
     setTimeout(() => {
@@ -88,7 +95,7 @@ function SentimentResult() {
   return (
     <div className='sentiment-result-container'>
       {isLoadingModalOpen ? (
-        <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen}/>
+        <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} loadingMessage={loadingMessage} />
       ) : (
         <div className={`sentiment-result-inner ${result}`}>
             <h3 className='result-title'>

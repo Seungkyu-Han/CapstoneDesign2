@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
-import LoadingModal from '../components/LoadingModal';
 import { getCookie } from '../utils/cookieManage';
 import useAudioRecord from '../hooks/useAudioRecord';
 
@@ -56,8 +55,7 @@ function CreateDiary() {
         })
         .then(response => response.json())
         .then((res) => {
-            setIsLoadingModalOpen(true);
-            navigate(`/result/${res}`);
+            navigate(`/result/create/${res}`);
         })
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
@@ -65,7 +63,6 @@ function CreateDiary() {
     };
 
     const handleRecordButton = () => {
-        setIsRecordModalOpen(true);
         onRecAudio();
     };
 
@@ -84,8 +81,7 @@ function CreateDiary() {
             }
         })
         .then(data => {
-            setIsLoadingModalOpen(false);
-            document.getElementsByClassName('diary-create-content')[0].innerHTML = data;
+            document.getElementsByClassName('diary-create-content')[0].innerHTML += data;
         })
         .catch(err => {
             if (err.message) {
@@ -93,7 +89,6 @@ function CreateDiary() {
             } else {
                 alert('서버 오류입니다.');
             }
-            setIsLoadingModalOpen(false);
         });
     }
 
@@ -124,7 +119,6 @@ function CreateDiary() {
                     offRecAudio={offRecAudio} 
                     onSubmitAudioFile={onSubmitAudioFile} 
                     setIsLoadingModalOpen={setIsLoadingModalOpen} />}
-                {isLoadingModalOpen && <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />}
             </div>
         </div>
     );

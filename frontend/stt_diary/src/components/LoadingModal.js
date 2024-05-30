@@ -1,17 +1,17 @@
 import React from 'react';
 import './LoadingModal.css'; // Import modal styles here
 
-function LoadingModal({setIsLoadingModalOpen }) {
+function LoadingModal(props) {
     const closeLoadingModal = (e) => {
         let target = e.target;
         if (target.classList.contains('modal-wrapper')){
-            setIsLoadingModalOpen(false);
+            props.setIsLoadingModalOpen(false);
         }
     };
     return (
         <div className='loading-modal-wrapper' onClick={closeLoadingModal}>
             <div className="loading-modal-content">
-                <p>오늘 일기로 감성 분석 중입니다 ...</p>
+                <p>{props.loadingMessage}</p>
                 <div className="loading-spinner"></div>
             </div>
         </div>

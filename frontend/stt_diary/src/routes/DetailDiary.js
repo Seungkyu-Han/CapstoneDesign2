@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './DetailDiary.css';
-import LoadingModal from '../components/LoadingModal';
 import { getCookie } from '../utils/cookieManage';
 
 function DetailDiary() {
     const { id } = useParams();
     const [diaryData, setDiaryData] = useState(null);
-    const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
+    const [diaryResult, setDiaryResult] = useState({ result: null, resultAnalysis: null });
+    const [chattings, setChattings] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
+        //일기 정보
         fetch(`${process.env.REACT_APP_API_URL}/api/diary?id=${id}`,
             {
                 method: 'GET',
@@ -32,34 +33,112 @@ function DetailDiary() {
         .catch(() => {
             alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
         });
-    },[id]);
 
-    const getDayOfWeek = (date) => { 
-        const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-        return daysOfWeek[date];
-    }
+        //감정 분석 결과
+        fetch(`${process.env.REACT_APP_API_URL}/api/feeling?diaryId=${id}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('accessToken'),
+                },
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                    navigate('/');
+                }
+            })
+            .then((res) => {
+                setDiaryResult(prevResult => ({ ...prevResult, result: res.emotion }));
+            })
+            .catch(error => {
+                alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                navigate('/');
+            });
 
-    const handleDeleteDiary = () => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/diary?id=${id}`,
-        {
-            method: 'DELETE',
+        //감정분석 내용
+        fetch(`${process.env.REACT_APP_API_URL}/api/chatGPT/diary?diaryId=${id}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('accessToken'),
+                },
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                    navigate('/');
+                }
+            })
+            .then((res) => {
+                setDiaryResult(prevResult => ({ ...prevResult, resultAnalysis: res.content }));
+            })
+            .catch(error => {
+                alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                navigate('/');
+            });
+
+        //상담 내용
+        fetch(`${process.env.REACT_APP_API_URL}/api/chatGPT/consult?diaryId=${id}`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + getCookie('accessToken'),
             },
         })
-        .then((res) => {
-            if (res.status === 200) {
-                alert('일기기 삭제되었습니다.');
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                    navigate('/');
+                }
+            })
+            .then((res) => {
+                setChattings(res);
+            })
+            .catch(error => {
+                alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
                 navigate('/');
-            }
-            else {
-                throw new Error();
-            }
-        })
-        .catch(() => {
-            alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
-        });
+            });
+
+    }, [id]);
+
+    const getDayOfWeek = (date) => {
+        const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        return daysOfWeek[date];
+    }
+
+    const handleDeleteDiary = () => {
+        const confirm = window.confirm('일기 삭제 시 상담 내용 및 감정 분석 결과도 함께 삭제됩니다. \n정말 삭제하시겠습니까?');
+        if (!confirm) return;
+        fetch(`${process.env.REACT_APP_API_URL}/api/diary?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('accessToken'),
+                },
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    deleteChattings();
+                    alert('일기기 삭제되었습니다.');
+                    navigate('/');
+                }
+                else {
+                    throw new Error();
+                }
+            })
+            .catch(() => {
+                alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+            });
     }
     
     const handleModifyDiary = () => {
@@ -90,19 +169,17 @@ function DetailDiary() {
                     },
                     body: JSON.stringify({
                         id : id,
-                        title: diaryTitle.innerText,
+                        title: diaryTitle.innerText.trim(),
                         content: diaryContent.value,
                         date: todayDate,
                 })
             })
             .then((res) => {
                 if (res.status === 200) {
-                    const sentimentWrapper = document.querySelector('.sentiment-wrapper');
-                    sentimentWrapper.remove();
-                    const chattingWrapper = document.querySelector('.chatting-wrapper');
-                    chattingWrapper.remove();
-                    setIsLoadingModalOpen(true);
-                    navigate(`/result/${id}`);
+                        const sentimentWrapper = document.querySelector('.sentiment-wrapper');
+                        sentimentWrapper.remove();
+                        deleteChattings();
+                        navigate(`/result/modify/${id}`);
                 }
                 else {
                     throw new Error();
@@ -112,6 +189,22 @@ function DetailDiary() {
                 alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
             });
         }
+    }
+    const deleteChattings = () => {
+        if (chattings.length === 0) return;
+        chattings.forEach(item => {
+            fetch(`${process.env.REACT_APP_API_URL}/api/chatGPT/consult?userConsultingId=${item.id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + getCookie('accessToken'),
+                    },
+                })
+                .catch(() => {
+                    alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+                });
+        });
     }
 
     if (diaryData) {
@@ -146,24 +239,30 @@ function DetailDiary() {
                     <div className="detail-title" contentEditable="false" suppressContentEditableWarning={true}>{titleLines}</div>
                     <textarea className="detail-content" defaultValue={diaryData.content} readOnly/>
                 </div>
-                <div className="sentiment-wrapper">
-                    <div className='sentiment-header'>
-                        <span className='result1'>감정 분석 결과: </span>
-                        <span className='result2'>긍정적</span>
+                <div className={`sentiment-wrapper ${diaryResult.result}`}>
+                    <h3 className='sentiment-title'>
+                        감정 분석 결과는
+                        {diaryResult.result === 'positive' && <span className='title-positive'>긍정적</span>}
+                        {diaryResult.result === 'negative' && <span className='title-negative'>부정적</span>}
+                        {diaryResult.result === 'neutral' && <span className='title-neutral'>중립적</span>}
+                        이네요
+                    </h3>
+                    <div className='sentiment-content'>{diaryResult.resultAnalysis}</div>
+                </div>
+                {chattings.length > 0 && (
+                    <div className="chatting-wrapper">
+                        {chattings.map((chatting, index) => {
+                            return (
+                                <div key={index}>
+                                    <div className='question-wrapper'>{chatting.question}</div>
+                                    <div className='answer-wrapper'>{chatting.answer}</div>
+                                </div>
+                            );
+                        })}
                     </div>
-                    <div className='sentiment-content'>... 감정분석 내용 ...</div>
-                </div>
-                <div className="chatting-wrapper">
-                    <div className='answer-wrapper'>안녕하세요! 심리상담 챗봇입니다.<br/>어떤 문제로 도와드릴까요?</div>
-                    <div className='question-wrapper'>요즘 너무 스트레스 받아요. 일상 생활에 집중이 안돼요</div>
-                    <div className='answer-wrapper'>그게 어떤 일이세요? 스트레스의 원인이 무엇인지 알려주시겠어요?</div>
-                    <div className='question-wrapper'>업무와 학업의 부담이 너무 커서요. 시간이 부족하고 갑작스러운 일정 때문에 힘들어요.</div>
-                    <div className='answer-wrapper'>이해합니다. 스트레스는 우리에게 많은 영향을 미칠 수 있습니다. 하루에 일정한 휴식 시간을 가져보는 것이 어떨까요? 스트레스 관리를 위해 규칙적인 운동이나 심호흡도 도움이 될 수 있습니다.</div>
-                    <div className='question-wrapper'>네, 그런 생각을 해보지 않았어요. 감사합니다.</div>
-                </div>
-                {isLoadingModalOpen && <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />}
+                    )}
             </div>
-        )
+        );
     }else {
         return <p className='noDataMessage'>해당 일기를 조회 중입니다....</p>;
     }
