@@ -210,15 +210,39 @@
         margin-right: 8px;
     }
 }
-@media screen and (max-width: 576px) {
+@media screen and (max-width: 768px) {
     .detail-diary-container {
-        padding: 8% 13%;
+        padding: 5% 3%;
     }
+
+    .diary-content-wrapper {
+        padding: 5% 5%;
+        margin: 0;
+    }
+
     .deleteBtn,
-    .modifyBtn{
+    .modifyBtn {
         padding: 6px 15px;
     }
+
     .deleteBtn {
         margin-right: 5px;
+    }
+
+    .sentiment-wrapper {
+        padding: 5% 3%;
+    }
+
+    .sentiment-content {
+        margin-top: 10px;
+    }
+
+    .chatting-wrapper {
+        padding: 5% 3%;
+    }
+
+    .answer-wrapper,
+    .question-wrapper {
+        max-width: 85%;
     }
 }
