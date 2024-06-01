@@ -6,10 +6,9 @@ import knu.capstoneDesign.data.dto.diary.req.DiaryPostReq
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetListRes
 import knu.capstoneDesign.data.dto.diary.res.DiaryGetRes
 import knu.capstoneDesign.data.entity.User
-import knu.capstoneDesign.repository.AnalysisRepository
-import knu.capstoneDesign.repository.DiaryRepository
-import knu.capstoneDesign.repository.UserRepository
+import knu.capstoneDesign.repository.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -24,8 +23,10 @@ class DiaryServiceAuthImpl(
     @Value("\${chatGPT.analysis}")
     private val chatGPTAnalysis: String,
     @Value("\${ai.server}")
-    private val aiServerUrl: String
-): DiaryServiceImpl(userRepository, diaryRepository, analysisRepository, chatGPTAnalysis, aiServerUrl) {
+    private val aiServerUrl: String,
+    private val redisTemplate: RedisTemplate<String, String>,
+    private val consultingRepository: ConsultingRepository
+): DiaryServiceImpl(userRepository, diaryRepository, analysisRepository, chatGPTAnalysis, aiServerUrl, redisTemplate, consultingRepository) {
 
     fun post(diaryPostReq: DiaryPostReq, authentication: Authentication): ResponseEntity<Int> {
         val userId = authentication.name.toLong()
