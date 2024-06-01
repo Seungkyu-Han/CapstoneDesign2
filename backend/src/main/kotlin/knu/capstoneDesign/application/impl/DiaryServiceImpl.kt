@@ -15,6 +15,7 @@ import knu.capstoneDesign.repository.AnalysisRepository
 import knu.capstoneDesign.repository.DiaryRepository
 import knu.capstoneDesign.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.*
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
@@ -23,6 +24,9 @@ import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 open class DiaryServiceImpl(
     private val userRepository: UserRepository,
@@ -31,7 +35,11 @@ open class DiaryServiceImpl(
     @Value("\${chatGPT.analysis}")
     private val chatGPTAnalysis: String,
     @Value("\${ai.server}")
-    private val aiServerUrl: String):DiaryService {
+    private val aiServerUrl: String,
+    private val redisTemplate: RedisTemplate<String, String>
+):DiaryService {
+
+    private val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
 
     override fun post(diaryPostReq: DiaryPostReq): ResponseEntity<Int> {
 
@@ -59,7 +67,7 @@ open class DiaryServiceImpl(
             analysis ->
                 analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
         }.thenRunAsync {
-            requestAnalysisToChatGPT("연결 종료", diaryPostReq.userId, 1)
+            disconnectChatGPT(diary.id ?: 0)
         }
 
         return ResponseEntity.ok(diary.id)
@@ -97,7 +105,7 @@ open class DiaryServiceImpl(
                 analysis ->
             analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
         }.thenRunAsync {
-            requestAnalysisToChatGPT("연결 종료", userId, 1)
+                disconnectChatGPT(diary.id ?: 0)
         }
 
         return ResponseEntity.ok().build()
@@ -176,5 +184,14 @@ open class DiaryServiceImpl(
         return responseEntity.body?.let {
             String(it.toByteArray(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)
         } ?: throw ConnectException()
+    }
+
+    private fun disconnectChatGPT(diaryId: Int){
+        redisTemplate.opsForValue().set(diaryId.toString(), "connect", 20, TimeUnit.MINUTES)
+        scheduler.schedule({
+            if(redisTemplate.opsForValue().get(diaryId.toString()) == null){
+                requestAnalysisToChatGPT("연결 종료", diaryId.toLong(), 1)
+            }
+        }, 21, TimeUnit.MINUTES)
     }
 }
