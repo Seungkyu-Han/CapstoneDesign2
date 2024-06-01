@@ -11,7 +11,7 @@ import java.util.*
 interface AnalysisRepository: JpaRepository<Analysis, Long> {
 
     @Transactional
-    fun deleteByDiary(diary: Diary)
+    fun deleteByDiary(diary: Diary): Int
     fun findByDiary(diary: Diary): Optional<Analysis>
 
     @Query(

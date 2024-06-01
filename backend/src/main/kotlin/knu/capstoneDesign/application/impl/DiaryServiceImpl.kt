@@ -11,9 +11,7 @@ import knu.capstoneDesign.data.entity.Analysis
 import knu.capstoneDesign.data.entity.Diary
 import knu.capstoneDesign.data.entity.User
 import knu.capstoneDesign.data.enum.Emotion
-import knu.capstoneDesign.repository.AnalysisRepository
-import knu.capstoneDesign.repository.DiaryRepository
-import knu.capstoneDesign.repository.UserRepository
+import knu.capstoneDesign.repository.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.*
@@ -36,7 +34,8 @@ open class DiaryServiceImpl(
     private val chatGPTAnalysis: String,
     @Value("\${ai.server}")
     private val aiServerUrl: String,
-    private val redisTemplate: RedisTemplate<String, String>
+    private val redisTemplate: RedisTemplate<String, String>,
+    private val consultingRepository: ConsultingRepository
 ):DiaryService {
 
     private val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
@@ -99,7 +98,10 @@ open class DiaryServiceImpl(
 
 
         CompletableFuture
-            .runAsync { analysisRepository.deleteByDiary(diary) }
+            .runAsync {
+                println("analysis Delete: ${analysisRepository.deleteByDiary(diary)}")
+                println("consulting Delete: ${consultingRepository.deleteByDiary(Diary(diaryPatchReq.id))}")
+            }
             .thenApplyAsync{ requestAnalysis(diaryContent ?: "") }
             .thenApply {
                 analysis ->
