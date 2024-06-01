@@ -58,7 +58,7 @@ function Consulting() {
     const timer = setTimeout(() => {
       alert('상담이 종료됐습니다.');
       navigate('/');
-    }, 1 * 60 * 1000);
+    }, 20 * 60 * 1000);
     return () => clearTimeout(timer);
   }, [navigate]);
 
