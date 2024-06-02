@@ -10,6 +10,11 @@ function DiaryList() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const navigate = useNavigate();
+  const setColor = {
+    positive: '#FFBBCA',
+    negative: '#7466AA',
+    neutral: '#FFF0BC',
+  };
 
   useEffect(() => {
     if(getCookie("accessToken")){
@@ -38,6 +43,36 @@ function DiaryList() {
       navigate('/login');
     }
   }, [year,month]);
+
+  useEffect(() => {
+    if (data.length > 0) {
+      data.forEach((item, i) => {
+        fetch(`${process.env.REACT_APP_API_URL}/api/feeling?diaryId=${item.id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getCookie('accessToken'),
+          },
+        })
+          .then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } else {
+              throw new Error();
+            }
+          })
+          .then((res) => {
+            const color = setColor[res.emotion];
+            document.getElementsByClassName('diary-color')[i].style.backgroundColor = color;
+          })
+          .catch((error) => {
+            alert('서버 오류입니다. 잠시 후 다시 시도해주세요.');
+            navigate('/');
+          });
+      });
+    }
+  }, [data]);
+
   
   const handleTimeSelectChange = () => {
     setYear(parseInt(document.getElementById('yearSelect').value));
