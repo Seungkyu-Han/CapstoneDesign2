@@ -4,6 +4,7 @@ import './CreateDiary.css';
 import RecordModal from '../components/RecordModal';
 import { getCookie } from '../utils/cookieManage';
 import useAudioRecord from '../hooks/useAudioRecord';
+import LoadingModal from '../components/LoadingModal';
 
 function CreateDiary() {
     const currentDate = new Date();
@@ -63,10 +64,11 @@ function CreateDiary() {
     };
 
     const handleRecordButton = () => {
-        onRecAudio();
+        onRecAudio(setIsRecordModalOpen);
     };
 
     const callSTT = (data) => {
+        setIsLoadingModalOpen(true);
         fetch(process.env.REACT_APP_AI_API_URL + '/whisper', {
             method: 'POST',
             body: data
@@ -89,6 +91,9 @@ function CreateDiary() {
             } else {
                 alert('서버 오류입니다.');
             }
+        })
+        .finally(() => {
+            setIsLoadingModalOpen(false);
         });
     }
 
@@ -119,6 +124,9 @@ function CreateDiary() {
                     offRecAudio={offRecAudio} 
                     onSubmitAudioFile={onSubmitAudioFile} 
                     setIsLoadingModalOpen={setIsLoadingModalOpen} />}
+                {
+                    isLoadingModalOpen ? <LoadingModal loadingMessage="음성을 텍스트로 변환중입니다." /> : null
+                }
             </div>
         </div>
     );
