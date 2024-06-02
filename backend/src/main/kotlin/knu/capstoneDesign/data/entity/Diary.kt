@@ -22,7 +22,7 @@ data class Diary(
     @Column(length = 500)
     var title: String?,
 
-    @Column(length = 5000)
+    @Column(length = 10000)
     var content: String?
 ){
     constructor(user: User, date: LocalDate, title: String, content: String):
