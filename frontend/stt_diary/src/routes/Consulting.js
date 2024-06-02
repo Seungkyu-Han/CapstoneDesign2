@@ -58,7 +58,7 @@ function Consulting() {
     const timer = setTimeout(() => {
       alert('상담이 종료됐습니다.');
       navigate('/');
-    }, 1 * 60 * 1000);
+    }, 20 * 60 * 1000);
     return () => clearTimeout(timer);
   }, [navigate]);
 
@@ -103,7 +103,7 @@ function Consulting() {
     <div className='chat-box-wrapper'>
       <div className='chat-box-wrapper-inner'>
         <div className='chat-box'>
-          <button id='mobile-exit-btn'>
+          <button id='mobile-exit-btn' onClick={()=>navigate('/')}>
             <img src={require('../assets/arrow_back.png')} alt='arrow_back'/>
           </button>
           <div className='chat-message-container-wrapper'>

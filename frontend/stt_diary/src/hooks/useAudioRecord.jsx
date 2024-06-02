@@ -9,7 +9,7 @@ const useAudioRecord = () => {
   const [audioUrl, setAudioUrl] = useState();
   const [recordingStopped, setRecordingStopped] = useState(false);
 
-  const onRecAudio = () => {
+  const onRecAudio = (callback) => {
     // 음원정보를 담은 노드를 생성하거나 음원을 실행또는 디코딩 시키는 일을 한다
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     // 자바스크립트를 통해 음원의 진행상태에 직접접근에 사용된다.
@@ -25,6 +25,7 @@ const useAudioRecord = () => {
     }
     // 마이크 사용 권한 획득
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      callback(true);
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.start();
       setStream(stream);
@@ -32,8 +33,7 @@ const useAudioRecord = () => {
       makeSound(stream);
 
       analyser.onaudioprocess = function (e) {
-        // 3분(180초) 지나면 자동으로 음성 저장 및 녹음 중지
-        if (e.playbackTime > 180) {
+        if (e.playbackTime > (60 * 5)) {
           stream.getAudioTracks().forEach(function (track) {
             track.stop();
           });
