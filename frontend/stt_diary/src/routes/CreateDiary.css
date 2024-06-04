@@ -1,0 +1,104 @@
+.create-diary-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex:1;
+}
+.create-diary-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    width: 60%;
+}
+.diary-create-date {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 14px;
+    color: black;
+}
+.diary-create-title {
+    height: auto;
+    text-align: left;
+    word-break: break-all;
+    border-radius: 15px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 3px #ccc;
+    padding: 10px 20px;
+    border: 1px solid #000;
+    font-weight: bold;
+    font-size: 16px;
+}
+.diary-create-content {
+    height: 40vh;
+    border-radius: 15px;
+    box-shadow: 0 3px 3px #ccc;
+    padding: 20px;
+    border: 1px solid #000;
+    font-size: 16px;
+}
+.diary-create-content:focus,
+.diary-create-title:focus {
+    outline: none;
+}
+input[type="text"]::placeholder {
+    color: #969A9F;
+    font-weight: normal
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+}
+.cancel-button {
+    border: 1px solid #000;
+    border-radius: 20px;
+    background-color: rgba(230, 232, 235, 0.5);
+    padding: 10px 30px;
+    margin: 10px;
+    cursor: pointer;
+}
+.save-button {
+    border: 1px solid #000;
+    border-radius: 20px;
+    background-color: rgba(255, 202, 212, 0.5);
+    margin: 10px;
+    padding: 10px 30px;
+    cursor: pointer;
+}
+.record-button {
+    border: 1px solid #000;
+    border-radius: 50%;
+    background-color: rgba(255, 202, 212, 0.5);
+    margin-right: 30px;
+    margin-left: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+}
+.record-button img {
+    width: 20px;
+    height: 20px;
+}
+@media screen and (max-width: 1200px) {
+    .create-diary-wrapper {
+        width: 70%;
+    }
+    .record-button {
+        margin-right: 6px;
+        margin-left: 6px;
+    }
+}
+@media screen and (max-width: 576px) {
+    .create-diary-wrapper {
+        width: 85%;
+    }
+    .record-button {
+        margin-right: 6px;
+        margin-left: 6px;
+    }
+}

@@ -1,0 +1,94 @@
+.report-wrapper {
+  padding: 0 100px;
+}
+
+.calendar {
+  border: 1px solid #eee;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 5px 5px #bbb;
+}
+
+.calendar-header {
+  background-color: #FBE2E2;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-around;
+}
+
+.calendar-header > div {
+  border: 1px solid #eee;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.date {
+  position: relative;
+  font-weight: 400;
+}
+
+.date > img {
+  vertical-align: bottom;
+  margin-right: 10px;
+}
+
+.calendar-body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.date-item {
+  box-sizing: border-box;
+  height: 130px;
+  border: 1px solid #eee;
+  padding: 10px;
+  position: relative;
+}
+
+.date-item > .other {
+  color: #BBB;
+}
+
+.date-item span {
+  position: absolute;
+  left: 20px;
+}
+
+.icon-container {
+  display: flex;
+  padding-top: 20px;
+  width: 100%;
+  height: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.icon {
+  width: 40%;
+}
+
+.date-btn-container {
+  position: absolute;
+  right: 10px;
+}
+
+.date-btn {
+  border: none;
+  background: none;
+  width: 35px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 992px) {
+  .calendar {
+    border-radius: 0;
+  }
+
+  .report-wrapper {
+    padding: 0;
+  }
+}

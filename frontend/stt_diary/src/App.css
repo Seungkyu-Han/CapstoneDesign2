@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;900&display=swap');
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow-y: scroll;
+}
+
