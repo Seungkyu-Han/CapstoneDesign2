@@ -61,10 +61,10 @@ open class DiaryServiceImpl(
         }
 
         CompletableFuture.supplyAsync{
-            requestAnalysis(diaryContent ?: "")
+            requestAnalysis(diaryContent ?: "", diary)
         }.thenApply {
-            analysis ->
-                analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
+//            analysis ->
+//                println("save: ${analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))}")
         }.thenRunAsync {
             disconnectChatGPT(diary.id ?: 0)
         }
@@ -102,7 +102,7 @@ open class DiaryServiceImpl(
                 println("analysis Delete: ${analysisRepository.deleteByDiary(diary)}")
                 println("consulting Delete: ${consultingRepository.deleteByDiary(Diary(diaryPatchReq.id))}")
             }
-            .thenApplyAsync{ requestAnalysis(diaryContent ?: "") }
+            .thenApplyAsync{ requestAnalysis(diaryContent ?: "", diary) }
             .thenApply {
                 analysis ->
             analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(analysis), analysisFromChatGPTRequest.get()))
@@ -143,7 +143,7 @@ open class DiaryServiceImpl(
             .body(diaryRepository.findByUserId(userId))
     }
 
-    private fun requestAnalysis(content: String): String{
+    private fun requestAnalysis(content: String, diary: Diary): String{
         println(content)
         val restTemplate = RestTemplate()
 
@@ -157,7 +157,8 @@ open class DiaryServiceImpl(
         val responseEntity = restTemplate.postForEntity(
             "$aiServerUrl/sentiment", requestEntity, String::class.java)
 
-        println(responseEntity)
+        println("save: ${analysisRepository.save(Analysis(id = null, diary = diary, emotion = Emotion.valueOf(responseEntity.body ?: throw ConnectException()), ""))}")
+
         return responseEntity.body ?: throw ConnectException()
     }
 
