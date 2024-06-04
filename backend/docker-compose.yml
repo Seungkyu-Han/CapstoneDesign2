@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  capstone-dev:
+    image: capstone
+    container_name: capstone
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis

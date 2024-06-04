@@ -1,9 +1,9 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+backend/HELP.md
+backend/.gradle
+backend/build/
+backend/!gradle/wrapper/gradle-wrapper.jar
+backend/!**/src/main/**/build/
+backend/!**/src/test/**/build/
 
 ### STS ###
 .apt_generated
@@ -34,10 +34,10 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+backend/.vscode/
 
 ### Kotlin ###
-.kotlin
+backend/.kotlin
 
 ### application.yml ###
-src/main/resources/application.yml
+backend/src/main/resources/application.yml
